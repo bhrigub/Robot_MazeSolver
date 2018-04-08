@@ -1,4 +1,8 @@
 # Slaughterbot Go scripts and API
+"""
+@author: Achin, Bhrigu, Frank
+References: https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
+"""
 import sys
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
