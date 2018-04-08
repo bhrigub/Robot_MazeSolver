@@ -16,14 +16,14 @@ class TestSBGo(unittest.TestCase):
     def test_motor_movement (self):
         for i in range(0,10):
             if i < 5:
-                if i % 2 = 1:
+                if i % 2 == 1:
                     turn_wheels ("forward")
                     time.sleep (1)
                 else:
                     turn_wheels ("backward")
                     time.sleep (1)
              else:
-                 if i % 2 = 1:
+                 if i % 2 == 1:
                     turn_wheels ("left")
                     time.sleep (1)
                 else:
