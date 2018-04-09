@@ -70,13 +70,17 @@ class SlaughterBot():
 
 def main():
     gopigo=SlaughterBot()
-    gopigo.turn_wheels (1)
+    temp = 1
+    gopigo.turn_wheels (temp)
     time.sleep (1)
-    gopigo.turn_wheels (2)
+    temp = 2
+    gopigo.turn_wheels (temp)
     time.sleep (1)
-    gopigo.turn_wheels (3)
+    temp = 3
+    gopigo.turn_wheels (temp)
     time.sleep (1)
-    gopigo.turn_wheels (4)
+    temp = 4
+    gopigo.turn_wheels (temp)
     time.sleep (1)
 #                time.sleep (1)
 #    for i in range(0,10):
