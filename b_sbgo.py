@@ -39,7 +39,7 @@ class SlaughterBot():
 #        else:
 #            self.drive_cm2(td_value, True)
 
-    def turn_wheels (self,movement_direction):
+    def move_robot (self,movement_direction):
         if (movement_direction == "forward"):
             self.gpg.forward()
         elif (movement_direction == "backward"):
@@ -68,17 +68,31 @@ class SlaughterBot():
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
+        
+    def turn_wheel(self, wheel_turn):
+        if (wheel_turn== "left"):
+            self.gpg.left()
+        elif (wheel_turn== "right"):
+            self.gpg.right()
+        else:
+            self.turn_degrees(0,0)
 
 
 def main():
     gopigo=SlaughterBot()
-    gopigo.turn_wheels ("forward")
+    gopigo.move_robot ("forward")
     time.sleep (1)
-    gopigo.turn_wheels ("left")
+    gopigo.move_robot ("left")
     time.sleep (1)
-    gopigo.turn_wheels ("forward")
-    time.sleep (3)
-    gopigo.turn_wheels ("boomchikiboom")
+    gopigo.move_robot ("right")
+    time.sleep (2)
+    gopigo.move_robot ("boomchikiboom")
+    gopigo.turn_wheel ("left")
+    time.sleep (2)
+    gopigo.turn_wheel ("right")
+    time.sleep (2)
+    
+    
 
 #    for i in range(0,12):
 #        if i < 5:
