@@ -70,10 +70,22 @@ class SlaughterBot():
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
         
     def turn_wheel(self, wheel_turn):
-        if (wheel_turn== "left"):
-            self.gpg.left()
-        elif (wheel_turn== "right"):
-            self.gpg.right()
+        if (wheel_turn== "leftf"):
+            #self.gpg.left()
+            self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, 150)
+            self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, 0)
+        elif (wheel_turn== "leftb"):
+            #self.gpg.right()
+            self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, -150)
+            self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, 0)
+        elif (wheel_turn== "rightf"):
+            #self.gpg.right()
+            self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, 0)
+            self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, 150)
+        elif (wheel_turn== "rightb"):
+            #self.gpg.right()
+            self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, 0)
+            self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, -150)
         else:
             self.turn_degrees(0,0)
 
@@ -87,11 +99,15 @@ def main():
     gopigo.move_robot ("right")
     time.sleep (2)
     gopigo.move_robot ("boomchikiboom")
-    gopigo.turn_wheel ("left")
+    gopigo.turn_wheel ("leftf")
     time.sleep (2)
-    gopigo.turn_wheel ("right")
+    gopigo.turn_wheel ("leftb")
     time.sleep (2)
-    
+    gopigo.turn_wheel ("rightf")
+    time.sleep (2)
+    gopigo.turn_wheel ("rightb")
+    time.sleep (2)
+    gopigo.move_robot ("boomchikiboom")
     
 
 #    for i in range(0,12):
