@@ -4,7 +4,7 @@
 References: https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 """
 import sys
-
+import time
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
 import easygopigo3 as easy
