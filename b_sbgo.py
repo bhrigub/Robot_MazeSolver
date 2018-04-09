@@ -22,30 +22,30 @@ class SlaughterBot():
 
 # Turn the distance sensor some number of degrees 
 # (specified by an argument) right/left
-def turn_distance_sensor(degrees):
-    pass
+    def turn_distance_sensor(degrees):
+        pass
 
 # Turn wheel 1 or 2 forward or backward independently 
 # (this can be several functions, or a single function 
 # that takes arguments).
-def wheelmove_time_distance(time_or_distance_parameter, td_value):
-    if (time_or_distance_parameter == "time"):          
-        gpg.forward()
-        gpg.sleep(td_value)
-    else:
-        gpg.drive_cm(td_value, True)
+    def wheelmove_time_distance(time_or_distance_parameter, td_value):
+        if (time_or_distance_parameter == "time"):          
+            gpg.forward()
+            gpg.sleep(td_value)
+        else:
+            gpg.drive_cm(td_value, True)
 
-def turn_wheels (movement_direction):
-    if (movement_direction) == "forward"):
-        gpg.forward()
-    elif (movement_direction) == "backward"):
-        gpg.backward()
-    elif (movement_direction) == "left"):
-        gpg.left()
-    elif (movement_direction) == "right"):
-        gpg.right()
-    else:
-        gpg.stop()
+    def turn_wheels (movement_direction):
+        if (movement_direction) == "forward"):
+            gpg.forward()
+        elif (movement_direction) == "backward"):
+            gpg.backward()
+        elif (movement_direction) == "left"):
+            gpg.left()
+        elif (movement_direction) == "right"):
+            gpg.right()
+        else:
+            gpg.stop()
 
 
 #Control the wheels together to turn the robot 90 degrees right/left
