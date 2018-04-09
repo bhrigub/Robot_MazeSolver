@@ -50,7 +50,7 @@ class SlaughterBot():
             self.gpg.backward()
         elif (movement_direction == "left"):
             self.gpg.left()
-        elif (movement == "right"):
+        elif (movement_direction == "right"):
             self.gpg.right()
         else:
             self.gpg.stop()
@@ -85,7 +85,7 @@ def main():
 #    gopigo.turn_wheels (temp)
 #    time.sleep (1)
 #                time.sleep (1)
-    for i in range(0,10):
+    for i in range(0,12):
         if i < 5:
             if i % 2 == 1:
                 gopigo.turn_wheels ("forward")
@@ -93,13 +93,15 @@ def main():
             else:
                 gopigo.turn_wheels ("backward")
                 time.sleep (1)
-        else:
+        elif i<10:
             if i % 2 == 1:
                 gopigo.turn_wheels ("left")
                 time.sleep (1)
             else:
                 gopigo.turn_wheels ("right")
                 time.sleep (1)
+        else:
+            gopigo.turn_wheels ("boomchikiboom")
     pass
 
 if __name__ == "__main__":
