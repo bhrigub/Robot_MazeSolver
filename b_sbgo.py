@@ -44,13 +44,13 @@ class SlaughterBot():
 #            self.drive_cm2(td_value, True)
 
     def turn_wheels (self,movement_direction):
-        if (movement_direction == 1):
+        if (movement_direction == "forward"):
             gpg.forward_move()
-        elif (movement_direction == 2):
+        elif (movement_direction == "backward"):
             gpg.backward_move()
-        elif (movement_direction == 3):
+        elif (movement_direction == "left":
             gpg.left_move()
-        elif (movement_direction == 4):
+        elif (movement_direction == "right"):
             gpg.right_move()
         else:
             gpg.stop_move()
