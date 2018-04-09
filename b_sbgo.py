@@ -18,7 +18,7 @@ class SlaughterBot():
         self.left=self.gpg.forward()
         self.right=self.gpg.forward()
         self.stop=self.gpg.stop()
-        self.drive_cm=self.gpg.drive_cm()
+        self.drive_cm2=self.gpg.drive_cm()
         
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
@@ -39,7 +39,7 @@ class SlaughterBot():
             self.forward()
             time.sleep(td_value)
         else:
-            self.drive_cm(td_value, True)
+            self.drive_cm2(td_value, True)
 
     def turn_wheels (self,movement_direction):
         if (movement_direction == "forward"):
