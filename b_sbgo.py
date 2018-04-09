@@ -13,7 +13,7 @@ class SlaughterBot():
     def __init__(self):
         self.gpg = easy.EasyGoPiGo3()
         self.DEFAULT_SPEED = 300
-        self.set_speed(self.DEFAULT_SPEED)
+
 	     #self.distance_sensor = self.gpg.init_distance_sensor()
         self.forward_move=self.gpg.forward()
         self.backward_move=self.gpg.backward()
