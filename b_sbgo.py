@@ -71,7 +71,7 @@ class SlaughterBot():
 #Print the encoders positions in a continuous stream.
 
 def main():
-#    gopigo=SlaughterBot()
+    gopigo=SlaughterBot()
 #    temp = 1
 #    gopigo.turn_wheels (temp)
 #    time.sleep (1)
