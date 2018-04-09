@@ -18,7 +18,7 @@ class SlaughterBot():
         self.left=self.gpg.forward()
         self.right=self.gpg.forward()
         self.stop=self.gpg.stop()
-        self.drive_cm=sel.gpg.drive_cm()
+        self.drive_cm=self.gpg.drive_cm()
         
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
