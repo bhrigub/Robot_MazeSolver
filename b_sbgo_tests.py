@@ -12,7 +12,7 @@ class TestSBGo(unittest.TestCase):
     def test_read_single_distance(self):
         reading = self.bot.read_single_distance()
         print("read_single_distance: {}".format(reading))
-	self.assertTrue(isinstance(reading, int))
+        self.assertTrue(isinstance(reading, int))
     def test_motor_movement (self):
         for i in range(0,10):
             if i < 5:
