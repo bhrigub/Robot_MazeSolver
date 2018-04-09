@@ -45,9 +45,9 @@ class SlaughterBot():
         elif (movement_direction == "backward"):
             self.gpg.backward()
         elif (movement_direction == "left"):
-            self.turn_degrees(-180,300)
+            self.turn_degrees(-180,180)
         elif (movement_direction == "right"):
-            self.turn_degrees(180,300)
+            self.turn_degrees(180,180)
         else:
             self.turn_degrees(0,0)
 
