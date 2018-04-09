@@ -15,11 +15,11 @@ class SlaughterBot():
         self.DEFAULT_SPEED = 300
 
 	     #self.distance_sensor = self.gpg.init_distance_sensor()
-        self.forward_move=self.gpg.forward()
-        self.backward_move=self.gpg.backward()
-        self.left_move=self.gpg.left()
-        self.right_move=self.gpg.right()
-        self.stop_move=self.gpg.stop()
+        #self.forward_move=self.gpg.forward()
+        #self.backward_move=self.gpg.backward()
+        #self.left_move=self.gpg.left()
+        #self.right_move=self.gpg.right()
+        #self.stop_move=self.gpg.stop()
         #self.drive_cm2=self.gpg.drive_cm()
         
     #Get a single reading from the distance sensor.
@@ -45,15 +45,15 @@ class SlaughterBot():
 
     def turn_wheels (self,movement_direction):
         if (movement_direction == 1):
-            self.forward_move()
+            gpg.forward_move()
         elif (movement_direction == 2):
-            self.backward_move()
+            gpg.backward_move()
         elif (movement_direction == 3):
-            self.left_move()
+            gpg.left_move()
         elif (movement_direction == 4):
-            self.right_move()
+            gpg.right_move()
         else:
-            self.stop_move()
+            gpg.stop_move()
 
 
 #Control the wheels together to turn the robot 90 degrees right/left
@@ -71,35 +71,35 @@ class SlaughterBot():
 #Print the encoders positions in a continuous stream.
 
 def main():
-    gopigo=SlaughterBot()
-    temp = 1
-    gopigo.turn_wheels (temp)
-    time.sleep (1)
-    temp = 2
-    gopigo.turn_wheels (temp)
-    time.sleep (1)
-    temp = 3
-    gopigo.turn_wheels (temp)
-    time.sleep (1)
-    temp = 4
-    gopigo.turn_wheels (temp)
-    time.sleep (1)
+#    gopigo=SlaughterBot()
+#    temp = 1
+#    gopigo.turn_wheels (temp)
+#    time.sleep (1)
+#    temp = 2
+#    gopigo.turn_wheels (temp)
+#    time.sleep (1)
+#    temp = 3
+#    gopigo.turn_wheels (temp)
+#    time.sleep (1)
+#    temp = 4
+#    gopigo.turn_wheels (temp)
+#    time.sleep (1)
 #                time.sleep (1)
-#    for i in range(0,10):
-#        if i < 5:
-#            if i % 2 == 1:
-#                gopigo.turn_wheels ("forward")
-#                time.sleep (1)
-#            else:
-#                gopigo.turn_wheels ("backward")
-#                time.sleep (1)
-#        else:
-#            if i % 2 == 1:
-#                gopigo.turn_wheels ("left")
-#                time.sleep (1)
-#            else:
-#                gopigo.turn_wheels ("right")
-#                time.sleep (1)
+    for i in range(0,10):
+        if i < 5:
+            if i % 2 == 1:
+                gopigo.turn_wheels ("forward")
+                time.sleep (1)
+            else:
+                gopigo.turn_wheels ("backward")
+                time.sleep (1)
+        else:
+            if i % 2 == 1:
+                gopigo.turn_wheels ("left")
+                time.sleep (1)
+            else:
+                gopigo.turn_wheels ("right")
+                time.sleep (1)
     pass
 
 if __name__ == "__main__":
