@@ -1,4 +1,4 @@
-#Slaughterbot Go scripts and API
+# Slaughterbot Go scripts and API
 import sys
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
@@ -10,7 +10,7 @@ class SlaughterBot():
         self.gpg = easy.EasyGoPiGo3()
         self.distance_sensor = self.gpg.init_distance_sensor()
         self.servo = self.gpg.init_servo("SERVO2")
-
+       
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
             return self.distance_sensor.read_mm()
@@ -27,8 +27,18 @@ class SlaughterBot():
 # Turn wheel 1 or 2 forward or backward independently
 # (this can be several functions, or a single function
 # that takes arguments).
-def turn_wheels(left, right):
-    pass
+    def turn_wheels(self, direction):
+        if direction == "l":
+            self.gpg.left()
+        if direction == "r":
+            self.gpg.right()
+        if direction == "f":
+            self.gpg.forward()
+        if direction == "b":
+            self.gpg.backward()
+        if direction == "s":
+            self.gpg.stop()
+
 
 #Control the wheels together to turn the robot 90 degrees right/left
 
@@ -48,8 +58,11 @@ def main():
     # do stuff
     bot = SlaughterBot()
     # turn_distance_sensor
-    degrees = input("Enter degrees to rotate:: ")
-    bot.turn_distance_sensor(degrees)
+    #degrees = input("Enter degrees to rotate:: ")
+    #bot.turn_distance_sensor(degrees)
+    #turn wheels
+    direction = input("Enter the direction:: ")
+    bot.turn_wheels(direction)
 
 if __name__ == "__main__":
     main()
