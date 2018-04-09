@@ -70,21 +70,30 @@ class SlaughterBot():
 
 def main():
     gopigo=SlaughterBot()
-    for i in range(0,10):
-        if i < 5:
-            if i % 2 == 1:
-                gopigo.turn_wheels ("forward")
-                time.sleep (1)
-            else:
-                gopigo.turn_wheels ("backward")
-                time.sleep (1)
-        else:
-            if i % 2 == 1:
-                gopigo.turn_wheels ("left")
-                time.sleep (1)
-            else:
-                gopigo.turn_wheels ("right")
-                time.sleep (1)
+    gopigo.turn_wheels ("forward")
+    time.sleep (1)
+    gopigo.turn_wheels ("backward")
+    time.sleep (1)
+    gopigo.turn_wheels ("left")
+    time.sleep (1)
+    gopigo.turn_wheels ("right")
+    time.sleep (1)
+#                time.sleep (1)
+#    for i in range(0,10):
+#        if i < 5:
+#            if i % 2 == 1:
+#                gopigo.turn_wheels ("forward")
+#                time.sleep (1)
+#            else:
+#                gopigo.turn_wheels ("backward")
+#                time.sleep (1)
+#        else:
+#            if i % 2 == 1:
+#                gopigo.turn_wheels ("left")
+#                time.sleep (1)
+#            else:
+#                gopigo.turn_wheels ("right")
+#                time.sleep (1)
     pass
 
 if __name__ == "__main__":
