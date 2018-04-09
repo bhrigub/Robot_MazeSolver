@@ -48,7 +48,7 @@ class SlaughterBot():
             gpg.forward_move()
         elif (movement_direction == "backward"):
             gpg.backward_move()
-        elif (movement_direction == "left":
+        elif (movement_direction == "left"):
             gpg.left_move()
         elif (movement_direction == "right"):
             gpg.right_move()
