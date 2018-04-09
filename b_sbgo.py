@@ -73,17 +73,17 @@ def main():
     for i in range(0,10):
         if i < 5:
             if i % 2 == 1:
-                turn_wheels ("forward")
+                gopigo.turn_wheels ("forward")
                 time.sleep (1)
             else:
-                turn_wheels ("backward")
+                gopigo.turn_wheels ("backward")
                 time.sleep (1)
         else:
             if i % 2 == 1:
-                turn_wheels ("left")
+                gopigo.turn_wheels ("left")
                 time.sleep (1)
             else:
-                turn_wheels ("right")
+                gopigo.turn_wheels ("right")
                 time.sleep (1)
     pass
 
