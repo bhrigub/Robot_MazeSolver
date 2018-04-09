@@ -30,22 +30,22 @@ class SlaughterBot():
 # that takes arguments).
     def wheelmove_time_distance(time_or_distance_parameter, td_value):
         if (time_or_distance_parameter == "time"):          
-            gpg.forward()
-            gpg.sleep(td_value)
+            self.gpg.forward()
+            self.time.sleep(td_value)
         else:
-            gpg.drive_cm(td_value, True)
+            self.gpg.drive_cm(td_value, True)
 
     def turn_wheels (movement_direction):
         if (movement_direction) == "forward"):
-            gpg.forward()
+            self.gpg.forward()
         elif (movement_direction) == "backward"):
-            gpg.backward()
+            self.gpg.backward()
         elif (movement_direction) == "left"):
-            gpg.left()
+            self.gpg.left()
         elif (movement_direction) == "right"):
-            gpg.right()
+            self.gpg.right()
         else:
-            gpg.stop()
+            self.gpg.stop()
 
 
 #Control the wheels together to turn the robot 90 degrees right/left
