@@ -17,17 +17,17 @@ class TestSBGo(unittest.TestCase):
         for i in range(0,10):
             if i < 5:
                 if i % 2 == 1:
-                    turn_wheels ("forward")
+                    self.bot.turn_wheels ("forward")
                     time.sleep (1)
                 else:
-                    turn_wheels ("backward")
+                    self.bot.turn_wheels ("backward")
                     time.sleep (1)
             else:
                 if i % 2 == 1:
-                    turn_wheels ("left")
+                    self.bot.turn_wheels ("left")
                     time.sleep (1)
                 else:
-                    turn_wheels ("right")
+                    self.bot.turn_wheels ("right")
                     time.sleep (1)
             
 if __name__ == '__main__':
