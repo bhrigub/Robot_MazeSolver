@@ -72,8 +72,8 @@ class SlaughterBot():
     def turn_wheel(self, wheel_turn):
         if (wheel_turn== "leftf"):
             #self.gpg.left()
-            self.gpg.set_motor_dps(self.gpg.MOTOR_LEFT, self.gpg.get_speed())
             self.gpg.set_motor_dps(self.gpg.MOTOR_RIGHT, 0)
+            self.gpg.set_motor_dps(self.gpg.MOTOR_LEFT, self.gpg.get_speed())
             #self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, 150)
             #self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, 0)
         elif (wheel_turn== "leftb"):
