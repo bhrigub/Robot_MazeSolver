@@ -3,13 +3,15 @@
 @author: Achin, Bhrigu, Frank
 References: https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 """
+from __future__ import print_function # use python 3 syntax but make it compatible with python 2
+from __future__ import division 
+
 import sys
 import time
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
 import easygopigo3 as easy
-from __future__ import print_function # use python 3 syntax but make it compatible with python 2
-from __future__ import division  
+ 
 
 class SlaughterBot():
     def __init__(self):
