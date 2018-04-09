@@ -22,8 +22,8 @@ class TestSBGo(unittest.TestCase):
                 else:
                     turn_wheels ("backward")
                     time.sleep (1)
-             else:
-                 if i % 2 == 1:
+            else:
+                if i % 2 == 1:
                     turn_wheels ("left")
                     time.sleep (1)
                 else:

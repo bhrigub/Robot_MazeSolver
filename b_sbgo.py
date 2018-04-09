@@ -12,8 +12,14 @@ import easygopigo3 as easy
 class SlaughterBot():
     def __init__(self):
         self.gpg = easy.EasyGoPiGo3()
-	self.distance_sensor = self.gpg.init_distance_sensor()
-
+	     self.distance_sensor = self.gpg.init_distance_sensor()
+        self.forward=self.gpg.forward()
+        self.backward=self.gpg.forward()
+        self.left=self.gpg.forward()
+        self.right=self.gpg.forward()
+        self.stop=self.gpg.stop()
+        self.drive_cm=sel.gpg.drive_cm()
+        
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
         return self.distance_sensor.read_mm()
@@ -30,22 +36,22 @@ def turn_distance_sensor(degrees):
 # that takes arguments).
 def wheelmove_time_distance(time_or_distance_parameter, td_value):
     if (time_or_distance_parameter == "time"):          
-        gpg.forward()
-        gpg.sleep(td_value)
+        self.forward()
+        time.sleep(td_value)
     else:
-        gpg.drive_cm(td_value, True)
+        self.drive_cm(td_value, True)
 
 def turn_wheels (movement_direction):
     if (movement_direction) == "forward"):
-        gpg.forward()
+        self.forward()
     elif (movement_direction) == "backward"):
-        gpg.backward()
+        self.backward()
     elif (movement_direction) == "left"):
-        gpg.left()
+        self.left()
     elif (movement_direction) == "right"):
-        gpg.right()
+        self.right()
     else:
-        gpg.stop()
+        self.stop()
 
 
 #Control the wheels together to turn the robot 90 degrees right/left
