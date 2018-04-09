@@ -1,4 +1,4 @@
-#Slaughterbot Go script	s and API
+#Slaughterbot Go scripts and API
 import sys
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
@@ -18,7 +18,7 @@ class SlaughterBot():
 
 # Turn the distance sensor some number of degrees
 # (specified by an argument) right/left
-def turn_distance_sensor(degrees):
+    def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
     
 
@@ -45,12 +45,12 @@ def turn_wheels(left, right):
 #Print the encoders positions in a continuous stream.
 
 def main():
+    # do stuff
+    bot = SlaughterBot()
     # turn_distance_sensor
-	degrees = input("Enter degrees to rotate:: ")
-	turn_distance_sensor(degrees)
+    degrees = input("Enter degrees to rotate:: ")
+    bot.turn_distance_sensor(degrees)
 
 if __name__ == "__main__":
     main()
-
-
 
