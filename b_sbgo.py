@@ -45,15 +45,15 @@ class SlaughterBot():
 
     def turn_wheels (self,movement_direction):
         if (movement_direction == "forward"):
-            gpg.forward()
+            self.gpg.forward()
         elif (movement_direction == "backward"):
-            gpg.backward()
+            self.gpg.backward()
         elif (movement_direction == "left"):
-            gpg.left()
+            self.gpg.left()
         elif (movement == "right"):
-            gpg.right()
+            self.gpg.right()
         else:
-            gpg.stop()
+            self.gpg.stop()
 
 
 #Control the wheels together to turn the robot 90 degrees right/left
