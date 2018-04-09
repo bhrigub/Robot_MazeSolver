@@ -42,13 +42,13 @@ class SlaughterBot():
 #            self.drive_cm2(td_value, True)
 
     def turn_wheels (self,movement_direction):
-        if (movement_direction == "forward"):
+        if (movement_direction == 1):
             self.forward_move()
-        elif (movement_direction == "backward"):
+        elif (movement_direction == 2):
             self.backward_move()
-        elif (movement_direction == "left"):
+        elif (movement_direction == 3):
             self.left_move()
-        elif (movement_direction == "right"):
+        elif (movement_direction == 4):
             self.right_move()
         else:
             self.stop_move()
@@ -70,13 +70,13 @@ class SlaughterBot():
 
 def main():
     gopigo=SlaughterBot()
-    gopigo.turn_wheels ("forward")
+    gopigo.turn_wheels (1)
     time.sleep (1)
-    gopigo.turn_wheels ("backward")
+    gopigo.turn_wheels (2)
     time.sleep (1)
-    gopigo.turn_wheels ("left")
+    gopigo.turn_wheels (3)
     time.sleep (1)
-    gopigo.turn_wheels ("right")
+    gopigo.turn_wheels (4)
     time.sleep (1)
 #                time.sleep (1)
 #    for i in range(0,10):
