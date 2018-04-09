@@ -12,7 +12,7 @@ import easygopigo3 as easy
 class SlaughterBot():
     def __init__(self):
         self.gpg = easy.EasyGoPiGo3()
-	     self.distance_sensor = self.gpg.init_distance_sensor()
+	     #self.distance_sensor = self.gpg.init_distance_sensor()
         self.forward=self.gpg.forward()
         self.backward=self.gpg.forward()
         self.left=self.gpg.forward()
