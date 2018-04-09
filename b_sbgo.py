@@ -42,13 +42,13 @@ class SlaughterBot():
             self.drive_cm(td_value, True)
 
     def turn_wheels (movement_direction):
-        if (movement_direction) == "forward"):
+        if (movement_direction == "forward"):
             self.forward()
-        elif (movement_direction) == "backward"):
+        elif (movement_direction == "backward"):
             self.backward()
-        elif (movement_direction) == "left"):
+        elif (movement_direction == "left"):
             self.left()
-        elif (movement_direction) == "right"):
+        elif (movement_direction == "right"):
             self.right()
         else:
             self.stop()
