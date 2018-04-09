@@ -34,14 +34,14 @@ class SlaughterBot():
     # Turn wheel 1 or 2 forward or backward independently 
     # (this can be several functions, or a single function 
     # that takes arguments).
-    def wheelmove_time_distance(time_or_distance_parameter, td_value):
+    def wheelmove_time_distance(self,time_or_distance_parameter, td_value):
         if (time_or_distance_parameter == "time"):          
             self.forward()
             time.sleep(td_value)
         else:
             self.drive_cm(td_value, True)
 
-    def turn_wheels (movement_direction):
+    def turn_wheels (self,movement_direction):
         if (movement_direction == "forward"):
             self.forward()
         elif (movement_direction == "backward"):
