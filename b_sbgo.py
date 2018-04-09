@@ -40,28 +40,18 @@ class SlaughterBot():
 #            self.drive_cm2(td_value, True)
 
     def turn_wheels (self,movement_direction):
-#        if (movement_direction == "forward"):
-#            self.gpg.forward()
-#        elif (movement_direction == "backward"):
-#            self.gpg.backward()
-#        elif (movement_direction == "left"):
-#            self.gpg.left()
-#        elif (movement_direction == "right"):
-#            self.gpg.right()
-#        else:
-#            self.gpg.stop()
         if (movement_direction == "forward"):
             self.gpg.forward()
         elif (movement_direction == "backward"):
             self.gpg.backward()
         elif (movement_direction == "left"):
-            self.turnDegrees(-90,100)
+            self.turn_degrees(-90,100)
         elif (movement_direction == "right"):
-            self.turnDegrees(90,100)
+            self.turn_degrees(90,100)
         else:
-            self.turnDegrees(0,0)
+            self.turn_degrees(0,0)
 
-    def turnDegrees(self, degrees, speed):
+    def turn_degrees(self, degrees, speed):
         # get the starting position of each motor
         StartPositionLeft      = self.gpg.get_motor_encoder(self.gpg.MOTOR_LEFT)
         StartPositionRight     = self.gpg.get_motor_encoder(self.gpg.MOTOR_RIGHT)
@@ -78,41 +68,36 @@ class SlaughterBot():
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
-#Control the wheels together to turn the robot 90 degrees right/left
 
-#Control the wheels together to t urn some number of degrees (specified by an argument) 
-#right/left
-
-#Turn the wheels in order to move the robot a specified distance forward or back (in cm).
-
-#Get a continuous stream of readings from the distance sensor.
-
-#Read the en coders position, in degrees. (See 
-#github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py)
-
-#Print the encoders positions in a continuous stream.
 
 def main():
     gopigo=SlaughterBot()
+    gopigo.turn_wheels ("forward")
+    time.sleep (1)
+    gopigo.turn_wheels ("left")
+    time.sleep (1)
+    gopigo.turn_wheels ("forward")
+    time.sleep (3)
+    
 
-    for i in range(0,12):
-        if i < 5:
-            if i % 2 == 1:
-                gopigo.turn_wheels ("forward")
-                time.sleep (1)
-            else:
-                gopigo.turn_wheels ("backward")
-                time.sleep (1)
-        elif i<10:
-            if i % 2 == 1:
-                gopigo.turn_wheels ("left")
-                time.sleep (1)
-            else:
-                gopigo.turn_wheels ("right")
-                time.sleep (1)
-        else:
-            gopigo.turn_wheels ("boomchikiboom")
-    pass
+#    for i in range(0,12):
+#        if i < 5:
+#            if i % 2 == 1:
+#                gopigo.turn_wheels ("forward")
+#                time.sleep (1)
+#            else:
+#                gopigo.turn_wheels ("backward")
+#                time.sleep (1)
+#        elif i<10:
+#            if i % 2 == 1:
+#                gopigo.turn_wheels ("left")
+#                time.sleep (1)
+#            else:
+#                gopigo.turn_wheels ("right")
+#                time.sleep (1)
+#        else:
+#            gopigo.turn_wheels ("boomchikiboom")
+#    pass
 
 if __name__ == "__main__":
     main()
