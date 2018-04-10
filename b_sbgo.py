@@ -48,8 +48,10 @@ class SlaughterBot():
             self.turn_degrees(-90,180)
         elif (movement_direction == "right"):
             self.turn_degrees(90,180)
-        else:
+	else:
             self.turn_degrees(0,0)
+    def move_distance (self,distance_val):
+	self.gpg.drive_cm(distance_val,True)
 
     def turn_degrees(self, degrees, speed):
         # get the starting position of each motor
@@ -100,28 +102,32 @@ class SlaughterBot():
 
 def main():
     gopigo=SlaughterBot()
-    # gopigo.move_robot ("forward")
-    # time.sleep (1)
-    # gopigo.move_robot ("left")
-    # time.sleep (1)
-    # gopigo.move_robot ("right")
-    # time.sleep (2)
-    # gopigo.move_robot ("boomchikiboom")
+
+    
+    """gopigo.move_robot ("forward")
+    time.sleep (3)
+    gopigo.move_robot ("left")
+    time.sleep (3)
+    gopigo.move_robot ("right")
+    time.sleep (3)
+    #gopigo.move_robot ("boomchikiboom")
     gopigo.turn_wheel ("leftf")
-    time.sleep (2)	
-    gopigo.move_robot ("boomchikiboom")
+    time.sleep (2)
     gopigo.turn_wheel ("leftb")
     time.sleep (2)
-    gopigo.move_robot ("boomchikiboom")
-	gopigo.turn_wheel ("rightf")
+    gopigo.turn_wheel ("rightf")
     time.sleep (2)
-	gopigo.move_robot ("boomchikiboom")
     gopigo.turn_wheel ("rightb")
     time.sleep (2)
-	gopigo.move_robot ("boomchikiboom")
     gopigo.move_robot ("boomchikiboom")
+    """
+
+    gopigo.move_distance(10)
     
 
+    #gopigo.turn_degrees(30,180)
+    #time.sleep(3)
+    #gopigo.turn_degrees(-45,180)
 #    for i in range(0,12):
 #        if i < 5:
 #            if i % 2 == 1:
