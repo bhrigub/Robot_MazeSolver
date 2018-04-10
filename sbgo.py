@@ -1,4 +1,4 @@
-# Slaughterbot Go scripts and API
+#Slaughterbot Go scripts and API
 import sys
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
@@ -28,27 +28,28 @@ class SlaughterBot():
 # (this can be several functions, or a single function
 # that takes arguments).
     def turn_wheels(self, direction):
-        if direction == 1:
-            try:
-                self.gpg.left()
-            except KeyboardInterrupt:
-                self.gpg.reset_all() 
-        if direction == 2:
-            try:
-                self.gpg.right()
-            except KeyboardInterrupt:
-                self.gpg.reset_all()
-        if direction == 3:
-            try:
-                self.gpg.forward()
-            except KeyboardInterrupt:
-                self.gpg.reset_all()
-        if direction == 4:
-            try:
-                self.gpg.backward()
-            except KeyboardInterrupt:
-                self.gpg.reset_all()
-
+            if direction == 1:
+                try:
+                    self.gpg.left()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 2:
+                try:
+                    self.gpg.right()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 3:
+                try:
+                    self.gpg.forward()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 4:
+                try:
+                    self.gpg.backward()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 5:
+                    self.gpg.stop() 
 
 #Control the wheels together to turn the robot 90 degrees right/left
 
@@ -56,6 +57,8 @@ class SlaughterBot():
 #right/left
 
 #Turn the wheels in order to move the robot a specified distance forward or back (in cm).
+    def drive_dist(self, distance):
+        self.gpg.drive_cm(distance)
 
 #Get a continuous stream of readings from the distance sensor.
 
@@ -63,12 +66,12 @@ class SlaughterBot():
 #github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py)
 #Print the encoders positions in a continuous stream.
     def read_encoders(self):
-        try:	    
+        try:
             while True:
-                print("Encoders positions in degrees (left motor, right motor): " + str(self.gpg.read_encoders()))
+                print("Encoders positions (degrees): " + str(self.gpg.read_encoders()))
         except KeyboardInterrupt:
             self.gpg.reset_all()
-	    self.gpg.reset_encoders() 
+            self.gpg.reset_encoders() 
     
 
 def main():
@@ -78,10 +81,12 @@ def main():
     #degrees = input("Enter degrees to rotate:: ")
     #bot.turn_distance_sensor(degrees)
     #turn wheels
-    direction = input("Enter the direction:: ")
-    bot.turn_wheels(direction)
-    #read and print encoders
-    bot.read_encoders()
+    #direction = input("Enter the direction:: ")
+    #bot.turn_wheels(direction)
+    #read encoders
+    #bot.read_encoders()
+    #drive distance
+    bot.drive_dist(-10)
 
 if __name__ == "__main__":
     main()
