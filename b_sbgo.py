@@ -46,7 +46,7 @@ Input Strings: Distance value in cm
 Default Action: N/A
 """
     def move_distance (self,distance_val):
-	self.gpg.drive_cm(distance_val,True)
+		self.gpg.drive_cm(distance_val,True)
 
 """
 Function Objective: Turn robot by 'X' degree using both the wheels 
