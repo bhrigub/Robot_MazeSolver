@@ -93,7 +93,7 @@ class SlaughterBot():
             self.gpg.set_motor_dps(-self.gpg.MOTOR_RIGHT, -self.gpg.get_speed())
         else:
             self.turn_degrees(0,0)
-			time.sleep(2)
+            time.sleep(2)
 
 
 def main():
