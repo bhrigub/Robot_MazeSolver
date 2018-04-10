@@ -1,3 +1,7 @@
+"""
+@author: Achin, Bhrigu, Frank
+References: https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
+"""
 import unittest
 import sbgo
 

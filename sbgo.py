@@ -3,6 +3,7 @@
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 import multiprocessing as mp
+
 import sys
 import time
 
