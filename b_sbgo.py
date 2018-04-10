@@ -21,12 +21,13 @@ class SlaughterBot():
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
         return self.distance_sensor.read_mm()
+    
 
-"""
-Function Objective: Move robot- Forward, Backward, Left, Right
-Input Strings: forward, backward, left, right
-Default Action: Stop
-"""
+
+#Function Objective: Move robot- Forward, Backward, Left, Right
+#Input Strings: forward, backward, left, right
+#Default Action: Stop
+
     def move_robot (self,movement_direction):
         if (movement_direction == "forward"):
             self.gpg.forward()
@@ -36,23 +37,24 @@ Default Action: Stop
             self.turn_degrees(-90,180)
         elif (movement_direction == "right"):
             self.turn_degrees(90,180)
-		else:
+        else:
             self.turn_degrees(0,0)
-			time.sleep(2)
-			
-"""
-Function Objective: Move robot 'X' cm distance 
-Input Strings: Distance value in cm
-Default Action: N/A
-"""
-    def move_distance (self,distance_val):
-		self.gpg.drive_cm(distance_val,True)
+            time.sleep(2)
 
-"""
-Function Objective: Turn robot by 'X' degree using both the wheels 
-Input Strings: Rotation value in degree
-Default Action: N/A
-"""
+			
+
+#Function Objective: Move robot 'X' cm distance 
+#Input Strings: Distance value in cm
+#Default Action: N/A
+
+    def move_distance (self,distance_val):
+        self.gpg.drive_cm(distance_val,True)
+
+
+#Function Objective: Turn robot by 'X' degree using both the wheels 
+#Input Strings: Rotation value in degree
+#Default Action: N/A
+
     def turn_degrees(self, degrees, speed):
         # get the starting position of each motor
         StartPositionLeft      = self.gpg.get_motor_encoder(self.gpg.MOTOR_LEFT)
@@ -71,11 +73,11 @@ Default Action: N/A
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
         
-"""
-Function Objective: Turn individual robot wheel 
-Input Strings: Wheel selection string - leftf, leftb, rightf, rightb
-Default Action: Stop
-"""
+
+#Function Objective: Turn individual robot wheel 
+#Input Strings: Wheel selection string - leftf, leftb, rightf, rightb
+#Default Action: Stop
+
     def turn_wheel(self, wheel_turn):
         if (wheel_turn== "leftf"):
             self.gpg.set_motor_dps(self.gpg.MOTOR_RIGHT, 0)
