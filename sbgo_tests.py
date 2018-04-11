@@ -13,6 +13,6 @@ class TestSBGo(unittest.TestCase):
         reading = self.bot.read_single_distance()
         print("read_single_distance: {}".format(reading))
 	self.assertTrue(isinstance(reading, int))
-
+    
 if __name__ == '__main__':
     unittest.main()
