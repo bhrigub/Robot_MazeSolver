@@ -7,6 +7,14 @@ import multiprocessing as mp
 
 import sys
 import time
+=======
+"""
+@author: Achin, Bhrigu, Frank
+References: https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
+"""
+from __future__ import print_function # use python 3 syntax but make it compatible with python 2
+from __future__ import division 
+>>>>>>> bBranch
 
 import sys
 import time
