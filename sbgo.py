@@ -181,15 +181,29 @@ def main():
 
   
     ##9b. turn wheel 1 or 2 forward or backward independently
- 
- 
-    ##9c. Control the wheels to move the robot forward or backward
+    #Forward left
+    #bot.turn_wheel ("leftf")
+    #Backward left
+    #bot.turn_wheel ("leftb")
+    #Forward right
+    #bot.turn_wheel ("rightf")
+    #Backward right
+    #bot.turn_wheel ("rightb")
 
+
+    ##9c. Control the wheels to move the robot forward or backward
+    #bot.move_robot ("forward")
+    #bot.move_robot ("backward")
+    
 
     ##9d. Control the wheels together to turn the robot 90 degrees right/left
-
-
+    #bot.move_robot ("left")
+    #bot.move_robot ("right")
+  
+    
     ##9e. Control the wheels together to turn the robot some number of degrees right/left
+    #bot.turn_degrees(30,180)
+    #bot.turn_degrees(45,180)
 
 
     ##9f. Turn wheels to move the robot a specified distance forward or backward(in cm)
@@ -211,7 +225,7 @@ def main():
     #p.start()
    
     while bot.read_single_distance() > 10:
-	bot.turn_wheels(3)
+	     bot.turn_wheels(3)
     bot.turn_wheels(5)
     bot.move_robot("right")
     time.sleep(1)
