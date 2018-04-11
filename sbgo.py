@@ -6,9 +6,11 @@
 from __future__ import print_function # use python 3 syntax but make it compatible with python 2
 from __future__ import division 
 
+
 import multiprocessing as mp
 import sys
 import time
+
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
 import easygopigo3 as easy
@@ -18,23 +20,45 @@ class SlaughterBot():
     def __init__(self, distance_hz=0):
         self.gpg = easy.EasyGoPiGo3()
         self.distance_sensor = self.gpg.init_distance_sensor()
+	self.servo = self.gpg.init_servo("SERVO2")
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
 
-    # Get a single cm reading from the distance sensor.
-    # Attribution: code used from GoPiGo3 software found at:
-    # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-    def read_single_distance(self):
-        return self.distance_sensor.read()
+ 
 
-    # Attribution: code used from GoPiGo3 software found at:
-    # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-    def read_continuous_distance(self):
-        if self.distance_hz <= 0:
-            delay = 0
-        else:
-            delay = 1.0/self.distance_hz
+#Turn the distance sensor some number of degrees (specified by an argument) right/left
+    def turn_distance_sensor(self, degrees):
+        self.servo.rotate_servo(degrees)
+     
 
+# Turn left/right wheel forward and both wheels simultaneously forward or backward.
+    def turn_wheels(self, direction):
+            if direction == 1:
+                try:
+                    self.gpg.left()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 2:
+                try:
+                    self.gpg.right()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 3:
+                try:
+                    self.gpg.forward()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 4:
+                try:
+                    self.gpg.backward()
+                except KeyboardInterrupt:
+                    self.gpg.reset_all()
+            if direction == 5:
+                    self.gpg.stop() 
+
+
+#Control the wheels together to turn the robot 90 degrees right/left
+#Control the wheels together to turn the robot 90 degrees right/left
 #Function Objective: Move robot- Forward, Backward, Left, Right
 #Input Strings: forward, backward, left, right
 #Default Action: Stop
@@ -52,12 +76,15 @@ class SlaughterBot():
             self.turn_degrees(0,0)
             time.sleep(2)
 
+			
+
 #Function Objective: Move robot 'X' cm distance 
 #Input Strings: Distance value in cm
 #Default Action: N/A
 
     def move_distance (self,distance_val):
         self.gpg.drive_cm(distance_val,True)
+
 
 #Function Objective: Turn robot by 'X' degree using both the wheels 
 #Input Strings: Rotation value in degree
@@ -80,6 +107,7 @@ class SlaughterBot():
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
+        
 
 #Function Objective: Turn individual robot wheel 
 #Input Strings: Wheel selection string - leftf, leftb, rightf, rightb
@@ -103,5 +131,85 @@ class SlaughterBot():
             time.sleep(2)
 
 
+#Control the wheels together to turn some number of degrees (specified by an argument)
+#right/left
+
+
+    #Turn the wheels in order to move the robot a specified distance forward or back (in cm).
+    def drive_dist(self, distance):
+        self.gpg.drive_cm(distance)
+
+
+    #Get a single reading from the distance sensor.
+    def read_single_distance(self):
+        return self.distance_sensor.read()
+
+
+    #Get a continuous stream of readings from the distance sensor.
+    def read_continuous_distance(self):
+        if self.distance_hz <= 0:
+            delay = 0
+        else:
+            delay = 1.0/self.distance_hz
+	try:
+            while True:
+		self.current_distance = self.read_single_distance()
+		print("Current distance: {}".format(self.current_distance))
+                time.sleep(delay)
+        except KeyboardInterrupt:
+            self.gpg.reset_all()    
+
+
+    #Read the encoders position in degrees. 
+    #Print the encoders positions in a continuous stream.
+    def read_encoders(self):
+        try:
+            while True:
+                print("Encoders positions (degrees): " + str(self.gpg.read_encoders()))
+        except KeyboardInterrupt:
+            self.gpg.reset_all()
+            self.gpg.reset_encoders() 
+    
+
+def main():
+    # do stuff
+    bot = SlaughterBot(4)
+
+    # turn_distance_sensor
+    #degrees = input("Enter degrees to rotate:: ")
+    #bot.turn_distance_sensor(degrees)
+  
+    #turn wheels
+    #direction = input("Enter the direction:: ")
+    #bot.turn_wheels(direction)
+ 
+    #read encoders
+    #bot.read_encoders()
+ 
+    #move distance
+    #bot.move_distance(-10)
+ 
+    #Distance sensor readings
+    #bot.read_single_distance()
+    #bot.read_continuous_distance()
+
+    #robot incorporated
+    #p = mp.Process(target=bot.read_continuous_distance)
+    #p.start()
+   
+    while bot.read_single_distance() > 10:
+	bot.turn_wheels(3)
+    bot.turn_wheels(5)
+    bot.move_robot("right")
+    time.sleep(1)
+    bot.turn_distance_sensor(180)
+    time.sleep(1)
+    while bot.read_single_distance() >= 10:
+        bot.move_distance(40)
+        time.sleep(1)
+        break
+
+
 if __name__ == "__main__":
     main()
+
