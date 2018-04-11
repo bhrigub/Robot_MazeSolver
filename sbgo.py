@@ -172,26 +172,39 @@ class SlaughterBot():
     
 
 def main():
-    # do stuff
+    #create class object(s)
     bot = SlaughterBot(4)
 
-    # turn_distance_sensor
+    ##9a. turn_distance_sensor some number of degrees (left -> 0-89 degrees right -> 91-180 degrees) 
     #degrees = input("Enter degrees to rotate:: ")
     #bot.turn_distance_sensor(degrees)
+
   
-    #turn wheels
-    #direction = input("Enter the direction:: ")
-    #bot.turn_wheels(direction)
+    ##9b. turn wheel 1 or 2 forward or backward independently
  
-    #read encoders
-    #bot.read_encoders()
  
-    #move distance
-    #bot.move_distance(-10)
- 
-    #Distance sensor readings
+    ##9c. Control the wheels to move the robot forward or backward
+
+
+    ##9d. Control the wheels together to turn the robot 90 degrees right/left
+
+
+    ##9e. Control the wheels together to turn the robot some number of degrees right/left
+
+
+    ##9f. Turn wheels to move the robot a specified distance forward or backward(in cm)
+    # (10) forward and (-10) for backward
+    #bot.move_distance(10)
+
+
+    ##10a, 10b Distance sensor readings
     #bot.read_single_distance()
     #bot.read_continuous_distance()
+
+
+    ##10c. read encoders position in degrees and print readings in continuous stream
+    #bot.read_encoders()
+
 
     #robot incorporated
     #p = mp.Process(target=bot.read_continuous_distance)
