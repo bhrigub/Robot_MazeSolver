@@ -2,6 +2,7 @@
 # Authors: A, B, F
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/gopigo3.py
 
 from __future__ import print_function # use python 3 syntax but make it compatible with python 2
 from __future__ import division 
@@ -10,6 +11,7 @@ from __future__ import division
 import multiprocessing as mp
 import sys
 import time
+import math
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
@@ -83,7 +85,7 @@ class SlaughterBot():
 #Default Action: N/A
 
     def move_distance (self,distance_val):
-        self.gpg.drive_cm(distance_val,True)
+        self.gpg.drive_cm(distance_val, False)
 
 
 #Function Objective: Turn robot by 'X' degree using both the wheels 
@@ -137,11 +139,13 @@ class SlaughterBot():
 
     #Turn the wheels in order to move the robot a specified distance forward or back (in cm).
     def drive_dist(self, distance):
-        self.gpg.drive_cm(distance)
+        self.gpg.drive_cm(distance, False)
 
 
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
+        print("Current distance: {}".format(self.distance_sensor.read()))
+        time.sleep(0.25)
         return self.distance_sensor.read()
 
 
@@ -169,7 +173,24 @@ class SlaughterBot():
         except KeyboardInterrupt:
             self.gpg.reset_all()
             self.gpg.reset_encoders() 
+
+
+    def read_encoders_avg(self, units):
+        WHEEL_CIRCUMFERENCE = 66.5 * math.pi
+        left, right = self.gpg.read_encoders()
+        average = (left+right)/2
+        if units=="cm":
+            average = ((average / 360 ) * WHEEL_CIRCUMFERENCE) / 10
+            print("Encoders position (cm): " + str(average))
+        else:
+            pass
+            # do no conversion
+        return average
     
+
+    def reset_encoders(self):
+        self.gpg.reset_encoders()
+
 
 def main():
     #create class object(s)
@@ -181,15 +202,29 @@ def main():
 
   
     ##9b. turn wheel 1 or 2 forward or backward independently
- 
+    #Forward left
+    #bot.turn_wheel ("leftf")
+    #Backward left
+    #bot.turn_wheel ("leftb")
+    #Forward right
+    #bot.turn_wheel ("rightf")
+    #Backward right
+    #bot.turn_wheel ("rightb") 
+
  
     ##9c. Control the wheels to move the robot forward or backward
+    #bot.move_robot ("forward")
+    #bot.move_robot ("backward")
 
 
     ##9d. Control the wheels together to turn the robot 90 degrees right/left
+    #bot.move_robot ("left")
+    #bot.move_robot ("right")
 
 
     ##9e. Control the wheels together to turn the robot some number of degrees right/left
+    #bot.turn_degrees(30,180)
+    #bot.turn_degrees(45,180)
 
 
     ##9f. Turn wheels to move the robot a specified distance forward or backward(in cm)
@@ -209,18 +244,30 @@ def main():
     #robot incorporated
     #p = mp.Process(target=bot.read_continuous_distance)
     #p.start()
-   
+    #while bot.current_distance > 10:
+       # bot.turn_wheels(3)
+    #print("stopping now")
+    #bot.turn_wheels(5)    
+
     while bot.read_single_distance() > 10:
-	bot.turn_wheels(3)
+        bot.turn_wheels(3)
     bot.turn_wheels(5)
     bot.move_robot("right")
     time.sleep(1)
     bot.turn_distance_sensor(180)
     time.sleep(1)
+    start = bot.read_encoders_avg("cm")
+    target = start + 40
+    print("start = " +str(start))
+    print("target = "+str(target))
+ 
     while bot.read_single_distance() >= 10:
         bot.move_distance(40)
-        time.sleep(1)
-        break
+        if bot.read_encoders_avg("cm") >= target:
+           print("Pos = "+str(bot.read_encoders_avg("cm")))
+           break
+    bot.move_robot("stop_bh")
+    #bot.turn_wheels(5)    
 
 
 if __name__ == "__main__":
