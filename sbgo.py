@@ -198,7 +198,7 @@ def main():
 
     ##9a. turn_distance_sensor some number of degrees (left -> 0-89 degrees right -> 91-180 degrees) 
     #degrees = input("Enter degrees to rotate:: ")
-    #bot.turn_distance_sensor(degrees)
+    bot.turn_distance_sensor(90)
 
   
     ##9b. turn wheel 1 or 2 forward or backward independently
