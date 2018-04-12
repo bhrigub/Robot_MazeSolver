@@ -27,12 +27,15 @@ class SlaughterBot():
         self.current_distance = mp.Value('i', 0)
 
  
-
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Turn the distance sensor some number of degrees (specified by an argument) right/left
     def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
      
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 # Turn left/right wheel forward and both wheels simultaneously forward or backward.
     def turn_wheels(self, direction):
             if direction == 1:
@@ -59,6 +62,8 @@ class SlaughterBot():
                     self.gpg.stop() 
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Control the wheels together to turn the robot 90 degrees right/left
 #Control the wheels together to turn the robot 90 degrees right/left
 #Function Objective: Move robot- Forward, Backward, Left, Right
@@ -80,6 +85,8 @@ class SlaughterBot():
 
 			
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Function Objective: Move robot 'X' cm distance 
 #Input Strings: Distance value in cm
 #Default Action: N/A
@@ -88,6 +95,8 @@ class SlaughterBot():
         self.gpg.drive_cm(distance_val, False)
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Function Objective: Turn robot by 'X' degree using both the wheels 
 #Input Strings: Rotation value in degree
 #Default Action: N/A
@@ -111,6 +120,8 @@ class SlaughterBot():
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
         
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Function Objective: Turn individual robot wheel 
 #Input Strings: Wheel selection string - leftf, leftb, rightf, rightb
 #Default Action: Stop
@@ -133,6 +144,8 @@ class SlaughterBot():
             time.sleep(2)
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Control the wheels together to turn some number of degrees (specified by an argument)
 #right/left
 
@@ -142,6 +155,8 @@ class SlaughterBot():
         self.gpg.drive_cm(distance, False)
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
         print("Current distance: {}".format(self.distance_sensor.read()))
@@ -149,6 +164,8 @@ class SlaughterBot():
         return self.distance_sensor.read()
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
     #Get a continuous stream of readings from the distance sensor.
     def read_continuous_distance(self):
         if self.distance_hz <= 0:
@@ -164,6 +181,8 @@ class SlaughterBot():
             self.gpg.reset_all()    
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
     #Read the encoders position in degrees. 
     #Print the encoders positions in a continuous stream.
     def read_encoders(self):
@@ -175,6 +194,9 @@ class SlaughterBot():
             self.gpg.reset_encoders() 
 
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/gopigo3.py
     def read_encoders_avg(self, units):
         WHEEL_CIRCUMFERENCE = 66.5 * math.pi
         left, right = self.gpg.read_encoders()
@@ -188,6 +210,8 @@ class SlaughterBot():
         return average
     
 
+# Attribution: code used from GoPiGo3 software found at:
+# https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
     def reset_encoders(self):
         self.gpg.reset_encoders()
 
@@ -237,7 +261,7 @@ def main():
     #bot.read_continuous_distance()
 
 
-    ##10c. read encoders position in degrees and print readings in continuous stream
+    ##10c, 10d  read encoders position in degrees and print readings in continuous stream
     #bot.read_encoders()
 
 
