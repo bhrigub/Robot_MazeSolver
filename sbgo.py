@@ -12,6 +12,7 @@ import multiprocessing as mp
 import sys
 import time
 import math
+import random
 
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
@@ -95,6 +96,7 @@ class SlaughterBot():
         # magic number 20 distance measure for boundary - put in parameters
         if self.current_distance.value > 20:
             self.gpg.drive_cm(distance_val, False)
+            time.sleep(2)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -115,7 +117,7 @@ class SlaughterBot():
         WheelTurnDegrees       = ((WheelTravelDistance / self.gpg.WHEEL_CIRCUMFERENCE) * 360)
         
         # Limit the speed
-        self.gpg.set_motor_limits(self.gpg.MOTOR_LEFT + self.gpg.MOTOR_RIGHT, dps = speed)
+        #self.gpg.set_motor_limits(self.gpg.MOTOR_LEFT + self.gpg.MOTOR_RIGHT, dps = speed)
         
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
@@ -175,7 +177,7 @@ class SlaughterBot():
         try:
             while True:
                 self.current_distance.value = self.read_single_distance()
-                print("Current distance: {}".format(self.current_distance.value))
+                #print("Current distance: {}".format(self.current_distance.value))
                 time.sleep(delay)
         except KeyboardInterrupt:
             self.gpg.reset_all()    
@@ -215,29 +217,28 @@ class SlaughterBot():
     def reset_encoders(self):
         self.gpg.reset_encoders()
 
-    # Scans at 45 degree increments for the max distance and returns the angle
-    # at that max distance
-    def scan_max_distance_angle(self):
+    # Scans at 45 degree increments for the distances greater than len and
+    # returns a list of angles that satisfy
+    def scan_distance_angles(self, min_distance, delta_angle):
         i = 0
-        max_angle = 0
-        max_distance = 0
-        delta_angle = 45
+        angles = []
+        self.turn_distance_sensor(90)
 
         while i <= 180:
             self.turn_distance_sensor(i)
             # magic number 3 for number of sensor readings to average
             distance = self.get_average_distance(3)
 
-            if distance > max_distance:
-                max_angle = i
-                max_distance = distance
+            if distance > min_distance:
+                angles.append(i)
+
             i += delta_angle
 
-        return max_angle
+        return angles
 
     # Returns the average distance over len readings
     def get_average_distance(self, len):
-        time.sleep(1)
+        time.sleep(0.25)
         i = 0
         sum = 0
 
@@ -257,7 +258,55 @@ def main():
     p.start()
     while True:
         bot.move_distance(10)
+        angles = bot.scan_distance_angles(20, 45)
+        if len(angles) == 0:
+            # reverse logic here - no where to go
+            continue
+
+        angle = random.choice(angles)
+        if angle < 90:
+            degrees = 90 - angle
+        elif angle == 90:
+            degrees = 0
+        else:
+            degrees = angle - 270
+
+        bot.turn_distance_sensor(angle)
+        time.sleep(0.25)
+        bot.turn_degrees(degrees, 180)
+        time.sleep(1)
+        bot.turn_distance_sensor(90)
+        time.sleep(0.25)
+
+def init():
+    bot = SlaughterBot(4)
+    bot.turn_distance_sensor(90)
+    p = mp.Process(target=bot.read_continuous_distance)
+    p.start()
+    return bot
+
+def loop_test(bot):
+    bot.move_distance(10)
+    angles = bot.scan_distance_angles(20, 45)
+    if len(angles) == 0:
+        # reverse logic here - no where to go
+        return
+
+    angle = random.choice(angles)
+    print("angles: {} picked: {}".format(angles, angle))
+    if angle < 90:
+        degrees = 90 - angle
+    elif angle == 90:
+        degrees = 0
+    else:
+        degrees = angle - 270
+    # let's see what direction we picked
+    bot.turn_distance_sensor(angle)
+    time.sleep(0.25)
+    bot.turn_degrees(degrees, 90)
+    time.sleep(1)
+    bot.turn_distance_sensor(90)
+    time.sleep(0.25)
 
 if __name__ == "__main__":
     main()
-
