@@ -1,0 +1,18 @@
+To run the main program of Slaughterbot run, cd to the directory of the project:
+
+sudo python3 sbgo.py
+
+This runs the while loop continuously.
+
+To test in stages, run the following:
+
+sudo python3
+
+>>> import sbgo
+>>> bot = sbgo.init()
+>>> sbgo.loop_test(bot)
+
+The loop_test does 1 iteration of the while loop to see what the behavior is.
+To run another iteration, simply type again:
+
+>>> sbgo.loop_test(bot)
