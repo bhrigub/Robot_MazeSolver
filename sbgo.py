@@ -22,7 +22,7 @@ class SlaughterBot():
     def __init__(self, distance_hz=0):
         self.gpg = easy.EasyGoPiGo3()
         self.distance_sensor = self.gpg.init_distance_sensor()
-	self.servo = self.gpg.init_servo("SERVO2")
+        self.servo = self.gpg.init_servo("SERVO2")
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
 
@@ -92,7 +92,9 @@ class SlaughterBot():
 #Default Action: N/A
 
     def move_distance (self,distance_val):
-        self.gpg.drive_cm(distance_val, False)
+        # magic number 20 distance measure for boundary - put in parameters
+        if self.current_distance.value > 20:
+            self.gpg.drive_cm(distance_val, False)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -159,8 +161,6 @@ class SlaughterBot():
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
     #Get a single reading from the distance sensor.
     def read_single_distance(self):
-        print("Current distance: {}".format(self.distance_sensor.read()))
-        time.sleep(0.25)
         return self.distance_sensor.read()
 
 
@@ -172,10 +172,10 @@ class SlaughterBot():
             delay = 0
         else:
             delay = 1.0/self.distance_hz
-	try:
+        try:
             while True:
-		self.current_distance = self.read_single_distance()
-		print("Current distance: {}".format(self.current_distance))
+                self.current_distance.value = self.read_single_distance()
+                print("Current distance: {}".format(self.current_distance.value))
                 time.sleep(delay)
         except KeyboardInterrupt:
             self.gpg.reset_all()    
@@ -215,84 +215,48 @@ class SlaughterBot():
     def reset_encoders(self):
         self.gpg.reset_encoders()
 
+    # Scans at 45 degree increments for the max distance and returns the angle
+    # at that max distance
+    def scan_max_distance_angle(self):
+        i = 0
+        max_angle = 0
+        max_distance = 0
+        delta_angle = 45
+
+        while i <= 180:
+            self.turn_distance_sensor(i)
+            # magic number 3 for number of sensor readings to average
+            distance = self.get_average_distance(3)
+
+            if distance > max_distance:
+                max_angle = i
+                max_distance = distance
+            i += delta_angle
+
+        return max_angle
+
+    # Returns the average distance over len readings
+    def get_average_distance(self, len):
+        time.sleep(1)
+        i = 0
+        sum = 0
+
+        while i < len:
+            sum += self.read_single_distance()
+            i += 1
+
+        return sum/len
 
 def main():
     #create class object(s)
     bot = SlaughterBot(4)
 
-    ##9a. turn_distance_sensor some number of degrees (left -> 0-89 degrees right -> 91-180 degrees) 
-    #degrees = input("Enter degrees to rotate:: ")
     bot.turn_distance_sensor(90)
 
-  
-    ##9b. turn wheel 1 or 2 forward or backward independently
-    #Forward left
-    #bot.turn_wheel ("leftf")
-    #Backward left
-    #bot.turn_wheel ("leftb")
-    #Forward right
-    #bot.turn_wheel ("rightf")
-    #Backward right
-    #bot.turn_wheel ("rightb") 
-
- 
-    ##9c. Control the wheels to move the robot forward or backward
-    #bot.move_robot ("forward")
-    #bot.move_robot ("backward")
-
-
-    ##9d. Control the wheels together to turn the robot 90 degrees right/left
-    #bot.move_robot ("left")
-    #bot.move_robot ("right")
-  
-    
-    ##9e. Control the wheels together to turn the robot some number of degrees right/left
-    #bot.turn_degrees(30,180)
-    #bot.turn_degrees(45,180)
-
-
-    ##9f. Turn wheels to move the robot a specified distance forward or backward(in cm)
-    # (10) forward and (-10) for backward
-    #bot.move_distance(10)
-
-
-    ##10a, 10b Distance sensor readings
-    #bot.read_single_distance()
-    #bot.read_continuous_distance()
-
-
-    ##10c, 10d  read encoders position in degrees and print readings in continuous stream
-    #bot.read_encoders()
-
-
-    #robot incorporated
-    #p = mp.Process(target=bot.read_continuous_distance)
-    #p.start()
-    #while bot.current_distance > 10:
-       # bot.turn_wheels(3)
-    #print("stopping now")
-    #bot.turn_wheels(5)    
-
-    while bot.read_single_distance() > 10:
-        bot.turn_wheels(3)
-    bot.turn_wheels(5)
-    bot.move_robot("right")
-    time.sleep(1)
-    bot.turn_distance_sensor(180)
-    time.sleep(1)
-    start = bot.read_encoders_avg("cm")
-    target = start + 40
-    print("start = " +str(start))
-    print("target = "+str(target))
- 
-    while bot.read_single_distance() >= 10:
-        bot.move_distance(40)
-        if bot.read_encoders_avg("cm") >= target:
-           print("Pos = "+str(bot.read_encoders_avg("cm")))
-           break
-    bot.move_robot("stop_bh")
-    #bot.turn_wheels(5)    
-
+    p = mp.Process(target=bot.read_continuous_distance)
+    p.start()
+    while True:
+        bot.move_distance(10)
 
 if __name__ == "__main__":
     main()
