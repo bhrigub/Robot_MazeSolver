@@ -228,6 +228,7 @@ class SlaughterBot():
             self.turn_distance_sensor(i)
             # magic number 3 for number of sensor readings to average
             distance = self.get_average_distance(3)
+            print("distance: {}".format(distance))
 
             if distance > min_distance:
                 angles.append(i)
@@ -241,13 +242,166 @@ class SlaughterBot():
         time.sleep(0.25)
         i = 0
         sum = 0
-
         while i < len:
             sum += self.read_single_distance()
             i += 1
 
         return sum/len
 
+    #def holeFinder (self, angle):
+		
+
+    #Adjusts the robot position before steering towards the corridor
+    def holeSubroutine(self, angle):
+        holeLength = 0
+        while self.current_distance.value >= 15:
+            self.gpg.drive_cm(5)
+            time.sleep(1)
+            holeLength += 5
+            self.turn_distance_sensor(90)
+            time.sleep(1)
+            #print("Turning Distance Sensor 90")
+            if self.current_distance.value <10:
+                #print("Distance less than 10")
+                continue
+            else:
+                self.turn_distance_sensor(angle)
+                time.sleep(1)
+                #print("revert")
+        self.turn_distance_sensor(angle)
+        time.sleep(1)
+        print("holeLength= ",holeLength)
+        holeLength = (holeLength/2) - 4
+        print("Distance reversed= ",holeLength)
+        print("current distance= ",self.current_distance.value)
+        self.gpg.drive_cm(-holeLength)
+
+    def check_Crash(self): 
+	#self.turn_distance_sensor(90)
+        self.turn_distance_sensor(0)
+        time.sleep(0.25)
+        
+	dist1= self.get_average_distance(3)
+        time.sleep(0.25)
+	self.turn_distance_sensor(45)
+        time.sleep(0.25)
+	dist2= self.get_average_distance(3)
+        time.sleep(0.25)
+	self.turn_distance_sensor(90)
+        time.sleep(0.25)
+	dist3= self.get_average_distance(3)
+        time.sleep(0.25)
+	self.turn_distance_sensor(135)
+        time.sleep(0.25)      
+	dist4= self.get_average_distance(3)
+        time.sleep(0.25)
+        self.turn_distance_sensor(180)
+        time.sleep(0.25)      
+	dist5= self.get_average_distance(3)
+
+	if dist1<10 or dist2<10 or dist3<10 or dist4 <10 or dist5 <10:
+	    return 1
+	else:
+	    return 0
+
+	
+    #Calibrate robot
+ 
+    def calibrateJunction (self):
+	#self.turn_distance_sensor(90)
+        self.turn_distance_sensor(0)
+        time.sleep(0.25)
+        distLeft= self.get_average_distance(3)
+        time.sleep(0.25)
+        self.turn_distance_sensor(180)
+        time.sleep(0.25)
+	distRight= self.get_average_distance(3)
+
+        baseLen = 25
+        if distRight > 10 and distLeft > 10:
+            blah=0
+
+        elif distRight < 20 and distLeft < 20:
+            if distRight > distLeft:
+                perpendicularLen = (distRight - distLeft) / 2
+                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
+            elif distRight < distLeft:
+                perpendicularLen = (distLeft - distRight) / 2
+                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
+            self.turn_degrees(angleDisplacement,300)
+	    time.sleep(0.25)
+
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+	        time.sleep(0.25)     
+		if self.current_distance.value < 10:
+                    self.calibrateJunction()
+
+        elif distRight < 20 and distLeft >20:
+            self.turn_degrees(-12,300)
+	    time.sleep(0.25)
+
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+	        time.sleep(0.25)        
+		if self.current_distance.value < 10:
+                    self.calibrateJunction()
+        elif distRight > 20 and distLeft <20:
+            self.turn_degrees(12,300)
+	    time.sleep(0.25)
+
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+	        time.sleep(0.25)
+ 
+                if self.current_distance.value < 10:
+                    self.calibrateJunction()
+
+
+
+    def calibrateJunction2 (self):
+	
+	self.turn_distance_sensor(90)
+        self.turn_distance_sensor(0)
+        distRight= self.get_average_distance(3)
+        self.turn_distance_sensor(180)
+        distLeft= self.get_average_distance(3)
+        baseLen = 25
+	if distRight > 10 and distLeft > 10:
+	    blah=0
+
+	elif distRight < 20 and distLeft < 20: 
+            if distRight > distLeft:
+                perpendicularLen = (distRight - distLeft) / 2
+                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
+            elif distRight < distLeft:
+                perpendicularLen = (distLeft - distRight) / 2
+                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
+            self.turn_degrees(angleDisplacement,300)
+  
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+                if self.current_distance.value < 10:
+                    self.calibrateJunction()
+
+	elif distRight < 20 and distLeft >20:
+	    self.turn_degrees(-20,300)
+
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+                if self.current_distance.value < 10:
+                    self.calibrateJunction()
+	elif distRight > 20 and distLeft <20:
+            self.turn_degrees(20,300)
+
+            for i in range (0,180,20):
+                self.turn_distance_sensor(i)
+                if self.current_distance.value < 10:
+                    self.calibrateJunction()
+
+
+	    
+	
 def main():
     #create class object(s)
     bot = SlaughterBot(4)
@@ -257,26 +411,61 @@ def main():
     p = mp.Process(target=bot.read_continuous_distance)
     p.start()
     while True:
-        bot.move_distance(10)
-        angles = bot.scan_distance_angles(20, 45)
-        if len(angles) == 0:
-            # reverse logic here - no where to go
-            continue
+# 	pickChoice=bot.check_Crash()
 
-        angle = random.choice(angles)
+#	if (pickChoice ==1):
+#            bot.calibrateJunction()
+	bot.move_distance(10)
+        #scan for corridors
+        angles = bot.scan_distance_angles(25, 90)
+        x = len(angles)
+        if x == 0:
+            # Dead end ... reverse logic here - no where to go
+            bot.turn_degrees(180,180)
+            time.sleep(1)
+            continue
+        
+        bot.turn_distance_sensor(90)
+	time.sleep(0.25)
+	angle = random.choice(angles)
+        print("Choices= ",angles)
+        print("Picked= ",angle)
+        #print("random angle=",angle)
         if angle < 90:
             degrees = 90 - angle
+            bot.turn_distance_sensor(angle)
+            time.sleep(0.5)
+            #Find mid of the corridor and adjust
+            bot.holeSubroutine(angle)
+            #bot.move_distance(16)
         elif angle == 90:
             degrees = 0
+            if x > 1:
+                #print("x=", x)    #number of corridors
+                #bot.move_distance(28)
+                time.sleep(2)
         else:
             degrees = angle - 270
+            bot.turn_distance_sensor(angle)
+            time.sleep(0.5)
+            #Find mid of the corridor and adjust
+            bot.holeSubroutine(angle)
+            #bot.move_distance(16)
 
-        bot.turn_distance_sensor(angle)
+        #bot.calibrateJunction()
+	bot.turn_distance_sensor(angle)
         time.sleep(0.25)
-        bot.turn_degrees(degrees, 180)
+        
+	
+	bot.turn_degrees(degrees, 180)
         time.sleep(1)
         bot.turn_distance_sensor(90)
         time.sleep(0.25)
+	
+	#pickChoice=bot.check_Crash()
+
+        #if (pickChoice ==1):
+        #bot.calibrateJunction()
 
 def init():
     bot = SlaughterBot(4)
