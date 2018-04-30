@@ -33,6 +33,7 @@ class SlaughterBot():
 #Turn the distance sensor some number of degrees (specified by an argument) right/left
     def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
+        time.sleep(1)
      
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -94,8 +95,17 @@ class SlaughterBot():
 
     def move_distance (self,distance_val):
         # magic number 20 distance measure for boundary - put in parameters
-        if self.current_distance.value > 20:
-            self.gpg.drive_cm(distance_val, False)
+        if self.current_distance.value > 7:
+            self.turn_distance_sensor(90)
+            if distance_val>10:
+                while distance_val > 0:
+                    travel = 5
+                    self.move_distance(travel)
+		    distance_val = distance_val - 5
+		    print("Distance travelled = ", travel)
+                    print("Distance trailing = ", distance_val)
+            else:
+                self.gpg.drive_cm(distance_val, False)
             time.sleep(2)
 
 
@@ -117,11 +127,12 @@ class SlaughterBot():
         WheelTurnDegrees       = ((WheelTravelDistance / self.gpg.WHEEL_CIRCUMFERENCE) * 360)
         
         # Limit the speed
-        #self.gpg.set_motor_limits(self.gpg.MOTOR_LEFT + self.gpg.MOTOR_RIGHT, dps = speed)
+        self.gpg.set_motor_limits(self.gpg.MOTOR_LEFT + self.gpg.MOTOR_RIGHT, dps = speed)
         
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
+        time.sleep(2)
         
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -145,7 +156,7 @@ class SlaughterBot():
             self.gpg.set_motor_dps(-self.gpg.MOTOR_RIGHT, -self.gpg.get_speed())
         else:
             self.turn_degrees(0,0)
-            time.sleep(2)
+        time.sleep(2)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -157,6 +168,7 @@ class SlaughterBot():
     #Turn the wheels in order to move the robot a specified distance forward or back (in cm).
     def drive_dist(self, distance):
         self.gpg.drive_cm(distance, False)
+        time.sleep(2)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -234,7 +246,7 @@ class SlaughterBot():
                 angles.append(i)
 
             i += delta_angle
-
+        self.turn_distance_sensor(90)
         return angles
 
     # Returns the average distance over len readings
@@ -247,8 +259,6 @@ class SlaughterBot():
             i += 1
 
         return sum/len
-
-    #def holeFinder (self, angle):
 		
 
     #Adjusts the robot position before steering towards the corridor
@@ -307,7 +317,7 @@ class SlaughterBot():
 	
     #Calibrate robot
  
-    def calibrateJunction (self):
+    def calibrateJunction2 (self):
 	#self.turn_distance_sensor(90)
         self.turn_distance_sensor(0)
         time.sleep(0.25)
@@ -350,7 +360,7 @@ class SlaughterBot():
             self.turn_degrees(12,300)
 	    time.sleep(0.25)
 
-            for i in range (0,180,20):
+            for i in range (0,180,90):
                 self.turn_distance_sensor(i)
 	        time.sleep(0.25)
  
@@ -359,7 +369,7 @@ class SlaughterBot():
 
 
 
-    def calibrateJunction2 (self):
+    def calibrateJunction (self):
 	
 	self.turn_distance_sensor(90)
         self.turn_distance_sensor(0)
@@ -371,6 +381,7 @@ class SlaughterBot():
 	    blah=0
 
 	elif distRight < 20 and distLeft < 20: 
+	    print("level1")	
             if distRight > distLeft:
                 perpendicularLen = (distRight - distLeft) / 2
                 angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
@@ -385,6 +396,7 @@ class SlaughterBot():
                     self.calibrateJunction()
 
 	elif distRight < 20 and distLeft >20:
+	    print ("level2")
 	    self.turn_degrees(-20,300)
 
             for i in range (0,180,20):
@@ -392,7 +404,8 @@ class SlaughterBot():
                 if self.current_distance.value < 10:
                     self.calibrateJunction()
 	elif distRight > 20 and distLeft <20:
-            self.turn_degrees(20,300)
+            print("level 3")
+	    self.turn_degrees(20,300)
 
             for i in range (0,180,20):
                 self.turn_distance_sensor(i)
@@ -417,12 +430,14 @@ def main():
 #            bot.calibrateJunction()
 	bot.move_distance(10)
         #scan for corridors
-        angles = bot.scan_distance_angles(25, 90)
+        angles = bot.scan_distance_angles(27, 90)
         x = len(angles)
         if x == 0:
             # Dead end ... reverse logic here - no where to go
             bot.turn_degrees(180,180)
             time.sleep(1)
+            bot.turn_distance_sensor(90)
+            time.sleep(0.25)
             continue
         
         bot.turn_distance_sensor(90)
@@ -442,7 +457,7 @@ def main():
             degrees = 0
             if x > 1:
                 #print("x=", x)    #number of corridors
-                #bot.move_distance(28)
+                bot.move_distance(28)
                 time.sleep(2)
         else:
             degrees = angle - 270
@@ -476,26 +491,32 @@ def init():
 
 def loop_test(bot):
     bot.move_distance(10)
-    angles = bot.scan_distance_angles(20, 45)
-    if len(angles) == 0:
+    angles = bot.scan_distance_angles(20, 90)
+    x = len(angles)
+    if x == 0:
         # reverse logic here - no where to go
+        bot.turn_degrees(180,90)
         return
 
     angle = random.choice(angles)
     print("angles: {} picked: {}".format(angles, angle))
     if angle < 90:
         degrees = 90 - angle
+        bot.turn_distance_sensor(angle)
+        bot.move_distance(16)
     elif angle == 90:
         degrees = 0
+        if x > 1:
+            print("x=", x)    #number of corridors
+            bot.move_distance(28)
     else:
         degrees = angle - 270
+        bot.turn_distance_sensor(angle)
+        bot.move_distance(16)
     # let's see what direction we picked
     bot.turn_distance_sensor(angle)
-    time.sleep(0.25)
     bot.turn_degrees(degrees, 90)
-    time.sleep(1)
     bot.turn_distance_sensor(90)
-    time.sleep(0.25)
 
 if __name__ == "__main__":
     main()
