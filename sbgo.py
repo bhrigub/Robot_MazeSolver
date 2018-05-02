@@ -26,9 +26,10 @@ class SlaughterBot():
         self.servo = self.gpg.init_servo("SERVO2")
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
-        self.current_direction = N
+        self.current_direction = 'N'
+        self.backtracking = False
         self.genList = list()
-	self.visited = list()
+        self.visited = list()
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -101,12 +102,12 @@ class SlaughterBot():
         if self.current_distance.value > 9:
             # TODO: this can be moved outside
             self.turn_distance_sensor(90)
-	    if distance_val>10:
+            if distance_val>10:
                 while distance_val > 0:
                     travel = 5
                     self.move_distance(travel)
-		    distance_val = distance_val - 5
-		    print("Distance travelled = ", travel)
+                    distance_val = distance_val - 5
+                    print("Distance travelled = ", travel)
                     print("Distance trailing = ", distance_val)
             else:
                 self.gpg.drive_cm(distance_val, False)
@@ -248,7 +249,7 @@ class SlaughterBot():
                 angles.append(i)
 
             i += delta_angle
-	self.turn_distance_sensor(90)
+        self.turn_distance_sensor(90)
         return angles
 
     # Returns the average distance over len readings
@@ -395,20 +396,19 @@ class SlaughterBot():
                 self.calibration()
                 time.sleep(0.5)
 
-    def reverse_direction(self):
-        if self.current_direction == N:
-            self.current_direction = S
-        elif self.current_direction == S:
-            self.current_direction = N
-        elif self.current_direction == E:
-            self.current_direction = W
-        elif self.current_direction == W:
-            self.current_direction = E
+    def reverse_direction(self, direction):
+        if direction == 'N':
+            return 'S'
+        elif direction == 'S':
+            return 'N'
+        elif direction == 'E':
+            return 'W'
+        elif direction == 'W':
+            return 'E'
 
     def add_decision_point(self, decision_point):
 	#add decision point to general list and mark as visited
-	genList.insert(0, decision_point)
-        visited.append(decision_point)
+        self.genList.insert(0, decision_point)
 
     def turn(self, angle, num_corridors):
         # update current direction
@@ -438,24 +438,24 @@ class SlaughterBot():
     def get_direction(self, angle):
         # TODO: get smarter about this - make an array or table
         if angle == 0:
-	    if self.current_direction == N:
-                return E
-            elif self.current_direction == E:
-                return S
-            elif self.current_direction == S:
-                return W
-            elif self.current_direction == W:
-                return N
+            if self.current_direction == 'N':
+                return 'E'
+            elif self.current_direction == 'E':
+                return 'S'
+            elif self.current_direction == 'S':
+                return 'W'
+            elif self.current_direction == 'W':
+                return 'N'
 
         if angle == 180:
-	    if self.current_direction == N:
-                return W
-            elif self.current_direction == E:
-                return N
-            elif self.current_direction == S:
-                return E
-            elif self.current_direction == W:
-                return S
+            if self.current_direction == 'N':
+                return 'W'
+            elif self.current_direction == 'E':
+                return 'N'
+            elif self.current_direction == 'S':
+                return 'E'
+            elif self.current_direction == 'W':
+                return 'S'
 
     def get_choices(self, angles):
         choices = []
@@ -463,13 +463,7 @@ class SlaughterBot():
             choices.append(self.get_direction(angle))
         return choices
 
-    def navigate(self):
-        # get latest decision point
-        dp = self.genList[0]
-        # get unexplored direction of that decision point
-        direction = dp.choices.pop()
-        # turn the direction of the bot given N,S,E,W
-    def turn_cardinal (self, directionTo):
+    def cardinal_to_degrees(self, directionTo):
         d1 = self.current_direction
         d2 = directionTo
 
@@ -495,7 +489,37 @@ class SlaughterBot():
                 angle = 180
         return angle
 
+    def turn_cardinal(self, directionTo):
+        angle = self.cardinal_to_degrees(directionTo)
+        self.turn(angle, 1)
 
+    def navigate(self):
+        # get latest decision point
+        if len(self.genList) > 0:
+            dp = self.genList[0]
+
+            # if backtracking, turn back to initial direction
+            if self.backtracking == True:
+                self.turn_cardinal(dp.initial_direction)
+                print("navigate: I'm not backtracking anymore!")
+
+            # get unexplored direction of that decision point
+            if len(dp.choices) > 0:
+                direction = dp.choices.pop()
+                if (self.current_direction != direction):
+                    self.turn_cardinal(direction)
+                else:
+                    print("navigation: I picked {} and I'm already going {}".format(self.current_direction, direction))
+            # if no more directions, turn around and head toward prior dp
+            else:
+                self.turn_cardinal(self.reverse_direction(dp.initial_direction))
+                self.visited.append(dp)
+                self.genList.pop(0)
+                self.backtracking = True
+                print("navigate: backtracking!")
+            print("navigate: I am heading: {}".format(self.current_direction))
+        else:
+            print("navigate: I have no more nodes to explore!")    
 
 class DecisionPoint:
     """
@@ -511,7 +535,6 @@ class DecisionPoint:
         self.x = x
         self.y = y
         self.choices = choices
-
 
 def main():
     #create class object(s)
@@ -530,7 +553,8 @@ def main():
 
 #	if (pickChoice ==1):
 #            bot.calibrateJunction()
-	time.sleep(1)
+        time.sleep(1)
+        # TODO: We might start at a decision point, so we should probably scan first before moving
         bot.move_distance(10)
         #scan for corridors
         angles = bot.scan_distance_angles(25, 90)
@@ -539,7 +563,7 @@ def main():
             # Dead end ... reverse logic here - no where to go
             bot.turn_degrees(180,90)
             # TODO: we can make this function call turn degrees 180,90
-            bot.reverse_direction()
+            bot.current_direction = bot.reverse_direction(bot.current_direction)
             time.sleep(1)
             continue
 
@@ -548,18 +572,19 @@ def main():
             bot.turn(angle, x)
 
         else:
-            # expansion
-            # turn angles into N,S,E,W choices
-            choices = bot.get_choices(angles)
-            # more than one direction, so make decision point
-            dp = DecisionPoint(bot.current_direction, 0, 0, choices)
-            # add decision point to stack
-            bot.add_decision_point(dp)
+            if bot.backtracking == False:
+                # expansion
+                # turn angles into N,S,E,W choices
+                choices = bot.get_choices(angles)
+                # more than one direction, so make decision point
+                dp = DecisionPoint(bot.current_direction, 0, 0, choices)
+                # add decision point to stack
+                bot.add_decision_point(dp)
 
 	    # move phase
 	    # pick direction to move based on stack decision point
 	    # TODO: print direction we're trying in navigate
-	    bot.navigate()
+            bot.navigate()
 
 
 def init():
