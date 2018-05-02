@@ -410,6 +410,66 @@ class SlaughterBot():
 	genList.insert(0, decision_point)
         visited.append(decision_point)
 
+    def turn(self, angle, num_corridors):
+        # update current direction
+        self.update_direction(angle)
+
+        if angle < 90:
+            degrees = 90 - angle
+            bot.turn_distance_sensor(angle)
+            bot.move_distance(16)
+        elif angle == 90:
+            degrees = 0
+            if num_corridors > 1:
+                print("turn: num_corridors =", num_corridors)
+                bot.move_distance(28)
+        else:
+            degrees = angle - 270
+            bot.turn_distance_sensor(angle)
+            bot.move_distance(16)
+
+        bot.turn_distance_sensor(angle)
+        bot.turn_degrees(degrees, 90)
+        bot.turn_distance_sensor(90)
+
+    def update_direction(self, angle):
+        self.current_direction = get_direction(angle)
+
+    def get_direction(self, angle):
+        # TODO: get smarter about this - make an array or table
+        if angle == 0:
+	    if self.current_direction == N:
+                return E
+            elif self.current_direction == E:
+                return S
+            elif self.current_direction == S:
+                return W
+            elif self.current_direction == W:
+                return N
+
+        if angle == 180:
+	    if self.current_direction == N:
+                return W
+            elif self.current_direction == E:
+                return N
+            elif self.current_direction == S:
+                return E
+            elif self.current_direction == W:
+                return S
+
+    def get_choices(self, angles):
+        choices = []
+        for angle in angles:
+            choices.append(self.get_direction(angle))
+        return choices
+
+    def navigate(self):
+        # get latest decision point
+        dp = self.genList[0]
+        # get unexplored direction of that decision point
+        direction = dp.choices.pop()
+        # turn the direction of the bot given N,S,E,W
+
 class DecisionPoint:
     """
     initial_direction: the direction the robot is facing when first approaching
@@ -457,7 +517,7 @@ def main():
 
         elif x == 1:
             # turn that direction
-            # update the self current
+            bot.turn(angle, x)
 
         else:
             # expansion
@@ -468,28 +528,11 @@ def main():
             # add decision point to stack
             bot.add_decision_point(dp)
 
-        # move phase
-        # pick direction to move based on stack decision point
-        # TODO: print direction we're trying in navigate
-        bot.navigate()
-        
-        if angle < 90:
-            degrees = 90 - angle
-            bot.turn_distance_sensor(angle)
-            bot.move_distance(16)
-        elif angle == 90:
-            degrees = 0
-            if x > 1:
-                print("x=", x)    #number of corridors
-                bot.move_distance(28)
-        else:
-            degrees = angle - 270
-            bot.turn_distance_sensor(angle)
-            bot.move_distance(16)
+	    # move phase
+	    # pick direction to move based on stack decision point
+	    # TODO: print direction we're trying in navigate
+	    bot.navigate()
 
-	bot.turn_distance_sensor(angle)	
-	bot.turn_degrees(degrees, 90)
-        bot.turn_distance_sensor(90)
 
 def init():
     bot = SlaughterBot(4)
