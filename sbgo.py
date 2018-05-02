@@ -5,7 +5,7 @@
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/gopigo3.py
 
 from __future__ import print_function # use python 3 syntax but make it compatible with python 2
-from __future__ import division 
+from __future__ import division
 
 
 import multiprocessing as mp
@@ -17,7 +17,7 @@ import random
 sys.path.append('/home/pi/Dexter/GoPiGo3/Software/Python')
 
 import easygopigo3 as easy
- 
+
 
 class SlaughterBot():
     def __init__(self, distance_hz=0):
@@ -27,14 +27,14 @@ class SlaughterBot():
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
 
- 
+
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 #Turn the distance sensor some number of degrees (specified by an argument) right/left
     def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
         time.sleep(0.25)
-     
+
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
@@ -61,7 +61,7 @@ class SlaughterBot():
                 except KeyboardInterrupt:
                     self.gpg.reset_all()
             if direction == 5:
-                    self.gpg.stop() 
+                    self.gpg.stop()
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -85,11 +85,11 @@ class SlaughterBot():
             self.turn_degrees(0,0)
             time.sleep(2)
 
-			
+
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-#Function Objective: Move robot 'X' cm distance 
+#Function Objective: Move robot 'X' cm distance
 #Input Strings: Distance value in cm
 #Default Action: N/A
 
@@ -103,7 +103,7 @@ class SlaughterBot():
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-#Function Objective: Turn robot by 'X' degree using both the wheels 
+#Function Objective: Turn robot by 'X' degree using both the wheels
 #Input Strings: Rotation value in degree
 #Default Action: N/A
 
@@ -111,16 +111,16 @@ class SlaughterBot():
         # get the starting position of each motor
         StartPositionLeft      = self.gpg.get_motor_encoder(self.gpg.MOTOR_LEFT)
         StartPositionRight     = self.gpg.get_motor_encoder(self.gpg.MOTOR_RIGHT)
-        
+
         # the distance in mm that each wheel needs to travel
         WheelTravelDistance    = ((self.gpg.WHEEL_BASE_CIRCUMFERENCE * degrees) / 360)
-        
+
         # the number of degrees each wheel needs to turn
         WheelTurnDegrees       = ((WheelTravelDistance / self.gpg.WHEEL_CIRCUMFERENCE) * 360)
-        
+
         # Limit the speed
         #self.gpg.set_motor_limits(self.gpg.MOTOR_LEFT + self.gpg.MOTOR_RIGHT, dps = 90)
-            
+
         # Set each motor target
         self.gpg.set_motor_position(self.gpg.MOTOR_LEFT, (StartPositionLeft + WheelTurnDegrees))
         self.gpg.set_motor_position(self.gpg.MOTOR_RIGHT, (StartPositionRight - WheelTurnDegrees))
@@ -128,7 +128,7 @@ class SlaughterBot():
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-#Function Objective: Turn individual robot wheel 
+#Function Objective: Turn individual robot wheel
 #Input Strings: Wheel selection string - leftf, leftb, rightf, rightb
 #Default Action: Stop
 
@@ -182,12 +182,12 @@ class SlaughterBot():
                 #print("Current distance: {}".format(self.current_distance.value))
                 time.sleep(delay)
         except KeyboardInterrupt:
-            self.gpg.reset_all()    
+            self.gpg.reset_all()
 
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
-    #Read the encoders position in degrees. 
+    #Read the encoders position in degrees.
     #Print the encoders positions in a continuous stream.
     def read_encoders(self):
         try:
@@ -195,7 +195,7 @@ class SlaughterBot():
                 print("Encoders positions (degrees): " + str(self.gpg.read_encoders()))
         except KeyboardInterrupt:
             self.gpg.reset_all()
-            self.gpg.reset_encoders() 
+            self.gpg.reset_encoders()
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -212,7 +212,7 @@ class SlaughterBot():
             pass
             # do no conversion
         return average
-    
+
 
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
@@ -251,7 +251,7 @@ class SlaughterBot():
         return sum/len
 
     #def holeFinder (self, angle):
-		
+
 
     #Adjusts the robot position before steering towards the corridor
     def holeSubroutine(self, angle):
@@ -278,13 +278,16 @@ class SlaughterBot():
         print("current distance= ",self.current_distance.value)
         self.gpg.drive_cm(-holeLength)
 
-    
-	    
+#Function Objective: Sense the environment around the robot
+#Input Strings: None
+#Default Action: None
+#Output: Distance at 0, 45, 90, 135, 180 degrees
+
     def sensorRead(self):
         self.turn_distance_sensor(0)
         #time.sleep(0.15)
         dist0= self.get_average_distance(3)
-        time.sleep(0.10)    
+        time.sleep(0.10)
         self.turn_distance_sensor(45)
         #time.sleep(0.15)
         dist45= self.get_average_distance(3)
@@ -307,63 +310,68 @@ class SlaughterBot():
 
         return dist0, dist45, dist90, dist135, dist180
 
+#Function Objective: Calibrate the robot according to the environment
+#Input Strings: None
+#Default Action: None
+#Output: Distance at 0, 45, 90, 135, 180 degrees
+
     def calibration(self):
-        
+
         distRight, dist45, dist90, dist135, distLeft= self.sensorRead()
         baseLen = 10
         nocalibration=0
         centerOfRotation =10
-        baseDist = 28/2        
+        baseDist = 28/2
         if distRight < 25 or  distLeft < 25:
-            
+
             #if distRight > 10 and distLeft > 10:
             #    nocalibration=1
 
             if distRight < 25 and distLeft < 25:
                 if distRight > distLeft:
                     perpendicularLen = (distRight - distLeft) / 2
-                    #angleDisplacement = 10
-                    angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
+                    angleDisplacement = 13
+                    #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 elif distRight < distLeft:
                     perpendicularLen = (distLeft - distRight) / 2
-                    #angleDisplacement = -10
-                    angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
+                    angleDisplacement = -13
+                    #angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision 1 picked: dist left <25 and dist right <25", angleDisplacement)
-            
+
             elif distRight > 25 and distLeft < 10:
-                angleDisplacement = 12
+                angleDisplacement = 13
                 #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision 2 picked: dist left <10 and dist right > 25", angleDisplacement)
-            
+
 
 
             elif distRight < 10 and distLeft > 25:
-                angleDisplacement = -12
+                angleDisplacement = -13
                 #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision 3 picked: dist left > 25 and dist right <10", angleDisplacement)
             else:
                 time.sleep(0.25)
- 
-        
+
+
         else:
-        
+
             if dist45 > dist135:
-                hypotenLen = centerOfRotation + dist135 
-                angleDisplacement = 12
+                hypotenLen = centerOfRotation + dist135
+                angleDisplacement = 13
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
-                self.turn_degrees(angleDisplacement,300)                
+                self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
-            
+
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
-                angleDisplacement = -12
+                angleDisplacement = -13
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.25)
@@ -374,14 +382,14 @@ class SlaughterBot():
         if dist45 <10 or dist135 < 10:
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
-                angleDisplacement = 12
+                angleDisplacement = 13
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
-                angleDisplacement = -12
+                angleDisplacement = -13
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.25)
@@ -397,8 +405,31 @@ class SlaughterBot():
                 self.calibration()
                 time.sleep(0.25)
 
+#Global variable declaration for mapping
+maze_Map = []
+decision_Point = []
+grid_Xaxis = 20
+grid_Yaxis = 20
+previous_Encoder = 0
+previous_Direction = 'NA'
+current_Direction = 'NA'
 
-      
+def mapping(self):
+    global maze_Map, grid_Xaxis, grid_Yaxis, previous_Encoder, previous_Turn
+    encoderValue = read_encoders_avg ('cm')
+
+    distanceMoved = encoderValue - previous_Encoder
+    if distanceMoved >= 10:
+        if previous_Turn == 'NA':
+            if previous_Encoder == 0:
+                maze_Map.append(())
+
+
+
+
+
+
+
 
 def main():
     #create class object(s)
@@ -407,11 +438,11 @@ def main():
     bot.turn_distance_sensor(90)
 
     #bot.calibration()
-    
+
     p = mp.Process(target=bot.read_continuous_distance)
     p.start()
     while True:
-        bot.calibration() 
+        bot.calibration()
 #       pickChoice=bot.check_Crash()
 
 #	if (pickChoice ==1):
@@ -426,7 +457,7 @@ def main():
             bot.turn_degrees(180,180)
             time.sleep(1)
             continue
-        
+
         #bot.turn_distance_sensor(90)
 	#time.sleep(0.25)
 	angle = random.choice(angles)
@@ -437,7 +468,7 @@ def main():
             degrees = 90 - angle
             bot.turn_distance_sensor(angle)
             time.sleep(0.5)
-            
+
             #Find mid of the corridor and adjust
             #bot.holeSubroutine(angle)
             bot.move_distance(16)
@@ -458,13 +489,13 @@ def main():
         #bot.calibrateJunction()
 	bot.turn_distance_sensor(angle)
         time.sleep(0.25)
-        
-	
+
+
 	bot.turn_degrees(degrees, 180)
         time.sleep(1)
         bot.turn_distance_sensor(90)
         time.sleep(0.25)
-	
+
 	#pickChoice=bot.check_Crash()
 
         #if (pickChoice ==1):
@@ -487,7 +518,7 @@ def loop_test(bot):
     angle = random.choice(angles)
     print("angles: {} picked: {}".format(angles, angle))
     if angle < 90:
-        degrees = 90 - angle
+        degr ees = 90 - angle
     elif angle == 90:
         degrees = 0
     else:
