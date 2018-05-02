@@ -27,6 +27,8 @@ class SlaughterBot():
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
         self.current_direction = N
+        self.genList = list()
+	self.visited = list()
 
  
 # Attribution: code used from GoPiGo3 software found at:
@@ -402,6 +404,11 @@ class SlaughterBot():
             self.current_direction = W
         elif self.current_direction == W:
             self.current_direction = E
+
+    def add_decision_point(self, decision_point):
+	#add decision point to general list and mark as visited
+	genList.insert(0, decision_point)
+        visited.append(decision_point)
 
 class DecisionPoint:
     """
