@@ -26,6 +26,7 @@ class SlaughterBot():
         self.servo = self.gpg.init_servo("SERVO2")
         self.distance_hz = distance_hz
         self.current_distance = mp.Value('i', 0)
+        self.current_direction = N
 
  
 # Attribution: code used from GoPiGo3 software found at:
@@ -95,7 +96,8 @@ class SlaughterBot():
 
     def move_distance (self,distance_val):
         # magic number 20 distance measure for boundary - put in parameters
-        if self.current_distance.value > 7:
+        if self.current_distance.value > 9:
+            # TODO: this can be moved outside
             self.turn_distance_sensor(90)
 	    if distance_val>10:
                 while distance_val > 0:
@@ -206,7 +208,6 @@ class SlaughterBot():
             self.gpg.reset_all()
             self.gpg.reset_encoders() 
 
-
 # Attribution: code used from GoPiGo3 software found at:
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/easygopigo3.py
 # https://github.com/DexterInd/GoPiGo3/blob/master/Software/Python/gopigo3.py
@@ -239,7 +240,7 @@ class SlaughterBot():
             self.turn_distance_sensor(i)
             # magic number 3 for number of sensor readings to average
             distance = self.get_average_distance(3)
-            print("distance: {}".format(distance))
+            print("scan_distance_angles: angle: {} distance: {}".format(i, distance))
 
             if distance > min_distance:
                 angles.append(i)
@@ -250,7 +251,6 @@ class SlaughterBot():
 
     # Returns the average distance over len readings
     def get_average_distance(self, len):
-        time.sleep(0.25)
         i = 0
         sum = 0
         while i < len:
@@ -289,27 +289,16 @@ class SlaughterBot():
 	    
     def sensorRead(self):
         self.turn_distance_sensor(0)
-        #time.sleep(0.15)
         dist0= self.get_average_distance(3)
-        time.sleep(0.10)    
         self.turn_distance_sensor(45)
-        #time.sleep(0.15)
         dist45= self.get_average_distance(3)
-        time.sleep(0.10)
         self.turn_distance_sensor(90)
-        #time.sleep(0.15)
         dist90= self.get_average_distance(3)
-        time.sleep(0.10)
         self.turn_distance_sensor(135)
-        #time.sleep(0.15)
         dist135= self.get_average_distance(3)
-        time.sleep(0.10)
         self.turn_distance_sensor(180)
-        #time.sleep(0.15)
         dist180= self.get_average_distance(3)
-        time.sleep(0.10)
         self.turn_distance_sensor(90)
-        time.sleep(0.25)
         print ("Sensor reading",dist0, dist45, dist90, dist135, dist180)
 
         return dist0, dist45, dist90, dist135, dist180
@@ -336,14 +325,14 @@ class SlaughterBot():
                     #angleDisplacement = -10
                     angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
                 self.turn_degrees(angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision 1 picked: dist left <25 and dist right <25", angleDisplacement)
             
             elif distRight > 25 and distLeft < 10:
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 self.turn_degrees(angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision 2 picked: dist left <10 and dist right > 25", angleDisplacement)
             
 
@@ -352,10 +341,10 @@ class SlaughterBot():
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 self.turn_degrees(angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision 3 picked: dist left > 25 and dist right <10", angleDisplacement)
             else:
-                time.sleep(0.25)
+                time.sleep(0.5)
  
         
         else:
@@ -365,7 +354,7 @@ class SlaughterBot():
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)                
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
             
             elif dist45 < dist135:
@@ -373,10 +362,10 @@ class SlaughterBot():
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
             else:
-                time.sleep(0.25)
+                time.sleep(0.5)
 
         if dist45 <10 or dist135 < 10:
             if dist45 > dist135:
@@ -384,17 +373,17 @@ class SlaughterBot():
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
-                time.sleep(0.25)
+                time.sleep(0.5)
                 print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
             else:
-                time.sleep(0.25)
+                time.sleep(0.5)
 
 
         if nocalibration == 0:
@@ -402,10 +391,32 @@ class SlaughterBot():
 
             if dist0 < 10 or dist45 < 10 or dist90 < 10 or dist135 < 10 or dist180 < 10:
                 self.calibration()
-                time.sleep(0.25)
+                time.sleep(0.5)
 
+    def reverse_direction(self):
+        if self.current_direction == N:
+            self.current_direction = S
+        elif self.current_direction == S:
+            self.current_direction = N
+        elif self.current_direction == E:
+            self.current_direction = W
+        elif self.current_direction == W:
+            self.current_direction = E
 
-      
+class DecisionPoint:
+    """
+    initial_direction: the direction the robot is facing when first approaching
+        the decision point - one of N,S,E,W
+    x: the x grid location
+    y: the y grid location
+    choices: the directions available to move from this decision point - array
+        of [N,S,E,W]
+    """
+    def __init__(self, initial_direction, x, y, choices):
+        self.initial_direction = initial_direction
+        self.x = x
+        self.y = y
+        self.choices = choices
 
 def main():
     #create class object(s)
@@ -418,6 +429,7 @@ def main():
     p = mp.Process(target=bot.read_continuous_distance)
     p.start()
     while True:
+        print("current direction: {}".format(bot.current_direction))
         bot.calibration() 
 #       pickChoice=bot.check_Crash()
 
@@ -431,11 +443,29 @@ def main():
         if x == 0:
             # Dead end ... reverse logic here - no where to go
             bot.turn_degrees(180,90)
+            # TODO: we can make this function call turn degrees 180,90
+            bot.reverse_direction()
+            time.sleep(1)
             continue
+
+        elif x == 1:
+            # turn that direction
+            # update the self current
+
+        else:
+            # expansion
+            # turn angles into N,S,E,W choices
+            choices = bot.get_choices(angles)
+            # more than one direction, so make decision point
+            dp = DecisionPoint(bot.current_direction, 0, 0, choices)
+            # add decision point to stack
+            bot.add_decision_point(dp)
+
+        # move phase
+        # pick direction to move based on stack decision point
+        # TODO: print direction we're trying in navigate
+        bot.navigate()
         
-	angle = random.choice(angles)
-        print("Choices= ",angles)
-        print("Picked= ",angle)
         if angle < 90:
             degrees = 90 - angle
             bot.turn_distance_sensor(angle)
