@@ -33,7 +33,7 @@ class SlaughterBot():
 #Turn the distance sensor some number of degrees (specified by an argument) right/left
     def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
-        time.sleep(0.25)
+        time.sleep(1)
      
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -95,9 +95,17 @@ class SlaughterBot():
 
     def move_distance (self,distance_val):
         # magic number 20 distance measure for boundary - put in parameters
-        if self.current_distance.value > 20:
+        if self.current_distance.value > 7:
             self.turn_distance_sensor(90)
-            self.gpg.drive_cm(distance_val, False)
+	    if distance_val>10:
+                while distance_val > 0:
+                    travel = 5
+                    self.move_distance(travel)
+		    distance_val = distance_val - 5
+		    print("Distance travelled = ", travel)
+                    print("Distance trailing = ", distance_val)
+            else:
+                self.gpg.drive_cm(distance_val, False)
             time.sleep(2)
 
 
@@ -159,6 +167,7 @@ class SlaughterBot():
     #Turn the wheels in order to move the robot a specified distance forward or back (in cm).
     def drive_dist(self, distance):
         self.gpg.drive_cm(distance, False)
+        time.sleep(2)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -236,7 +245,7 @@ class SlaughterBot():
                 angles.append(i)
 
             i += delta_angle
-
+	self.turn_distance_sensor(90)
         return angles
 
     # Returns the average distance over len readings
@@ -250,8 +259,6 @@ class SlaughterBot():
 
         return sum/len
 
-    #def holeFinder (self, angle):
-		
 
     #Adjusts the robot position before steering towards the corridor
     def holeSubroutine(self, angle):
@@ -423,52 +430,29 @@ def main():
         x = len(angles)
         if x == 0:
             # Dead end ... reverse logic here - no where to go
-            bot.turn_degrees(180,180)
-            time.sleep(1)
+            bot.turn_degrees(180,90)
             continue
         
-        #bot.turn_distance_sensor(90)
-	#time.sleep(0.25)
 	angle = random.choice(angles)
         print("Choices= ",angles)
         print("Picked= ",angle)
-        print("random angle=",angle)
         if angle < 90:
             degrees = 90 - angle
             bot.turn_distance_sensor(angle)
-            time.sleep(0.5)
-            
-            #Find mid of the corridor and adjust
-            #bot.holeSubroutine(angle)
             bot.move_distance(16)
         elif angle == 90:
             degrees = 0
             if x > 1:
                 print("x=", x)    #number of corridors
-                bot.move_distance(18)
-                time.sleep(2)
+                bot.move_distance(28)
         else:
             degrees = angle - 270
             bot.turn_distance_sensor(angle)
-            time.sleep(0.5)
-            #Find mid of the corridor and adjust
-            #bot.holeSubroutine(angle)
             bot.move_distance(16)
 
-        #bot.calibrateJunction()
-	bot.turn_distance_sensor(angle)
-        time.sleep(0.25)
-        
-	
-	bot.turn_degrees(degrees, 180)
-        time.sleep(1)
+	bot.turn_distance_sensor(angle)	
+	bot.turn_degrees(degrees, 90)
         bot.turn_distance_sensor(90)
-        time.sleep(0.25)
-	
-	#pickChoice=bot.check_Crash()
-
-        #if (pickChoice ==1):
-        #bot.calibrateJunction()
 
 def init():
     bot = SlaughterBot(4)
