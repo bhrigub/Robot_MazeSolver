@@ -278,87 +278,7 @@ class SlaughterBot():
         print("current distance= ",self.current_distance.value)
         self.gpg.drive_cm(-holeLength)
 
-    def check_Crash(self): 
-	#self.turn_distance_sensor(90)
-        self.turn_distance_sensor(0)
-        time.sleep(0.25)
-        
-	dist1= self.get_average_distance(3)
-        time.sleep(0.25)
-	self.turn_distance_sensor(45)
-        time.sleep(0.25)
-	dist2= self.get_average_distance(3)
-        time.sleep(0.25)
-	self.turn_distance_sensor(90)
-        time.sleep(0.25)
-	dist3= self.get_average_distance(3)
-        time.sleep(0.25)
-	self.turn_distance_sensor(135)
-        time.sleep(0.25)      
-	dist4= self.get_average_distance(3)
-        time.sleep(0.25)
-        self.turn_distance_sensor(180)
-        time.sleep(0.25)      
-	dist5= self.get_average_distance(3)
-
-	if dist1<10 or dist2<10 or dist3<10 or dist4 <10 or dist5 <10:
-	    return 1
-	else:
-	    return 0
-
-	
-    #Calibrate robot
- 
-    def calibrateJunction (self):
-	#self.turn_distance_sensor(90)
-        self.turn_distance_sensor(0)
-        time.sleep(0.25)
-        distLeft= self.get_average_distance(3)
-        time.sleep(0.25)
-        self.turn_distance_sensor(180)
-        time.sleep(0.25)
-	distRight= self.get_average_distance(3)
-
-        baseLen = 25
-        if distRight > 10 and distLeft > 10:
-            blah=0
-
-        elif distRight < 20 and distLeft < 20:
-            if distRight > distLeft:
-                perpendicularLen = (distRight - distLeft) / 2
-                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
-            elif distRight < distLeft:
-                perpendicularLen = (distLeft - distRight) / 2
-                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)),0)
-            self.turn_degrees(angleDisplacement,300)
-	    time.sleep(0.25)
-
-            for i in range (0,180,20):
-                self.turn_distance_sensor(i)
-	        time.sleep(0.25)     
-		if self.current_distance.value < 10:
-                    self.calibrateJunction()
-
-        elif distRight < 20 and distLeft >20:
-            self.turn_degrees(-12,300)
-	    time.sleep(0.25)
-
-            for i in range (0,180,20):
-                self.turn_distance_sensor(i)
-	        time.sleep(0.25)        
-		if self.current_distance.value < 10:
-                    self.calibrateJunction()
-        elif distRight > 20 and distLeft <20:
-            self.turn_degrees(12,300)
-	    time.sleep(0.25)
-
-            for i in range (0,180,20):
-                self.turn_distance_sensor(i)
-	        time.sleep(0.25)
- 
-                if self.current_distance.value < 10:
-                    self.calibrateJunction()
-
+    
 	    
     def sensorRead(self):
         self.turn_distance_sensor(0)
@@ -435,16 +355,16 @@ class SlaughterBot():
         
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135 
-                #angleDisplacement = 12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)                
                 time.sleep(0.25)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
             
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
-                #angleDisplacement = -12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = -12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
@@ -454,15 +374,15 @@ class SlaughterBot():
         if dist45 <10 or dist135 < 10:
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
-                #angleDisplacement = 12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
-                #angleDisplacement = -12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = -12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.25)
                 print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
