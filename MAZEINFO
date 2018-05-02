@@ -1,0 +1,4 @@
+Maze code will create a random maze and show navigation through it.
+
+Run the maze code by calling:
+python3 maze.py
