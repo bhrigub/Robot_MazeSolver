@@ -37,7 +37,7 @@ class SlaughterBot():
 #Turn the distance sensor some number of degrees (specified by an argument) right/left
     def turn_distance_sensor(self, degrees):
         self.servo.rotate_servo(degrees)
-        time.sleep(1)
+        time.sleep(0.25)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -327,6 +327,8 @@ class SlaughterBot():
                     perpendicularLen = (distLeft - distRight) / 2
                     #angleDisplacement = -10
                     angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
+                else:
+                    angleDisplacement = 0
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
                 print("Descision 1 picked: dist left <25 and dist right <25", angleDisplacement)
@@ -354,6 +356,7 @@ class SlaughterBot():
 
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
+                #angleDisplacement = =-12
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
@@ -363,6 +366,7 @@ class SlaughterBot():
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
+                #angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.5)
@@ -374,6 +378,7 @@ class SlaughterBot():
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
                 angleDisplacement = 12
+                #angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
@@ -381,6 +386,7 @@ class SlaughterBot():
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
+                #angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(-angleDisplacement,300)
                 time.sleep(0.5)
@@ -416,24 +422,25 @@ class SlaughterBot():
 
         if angle < 90:
             degrees = 90 - angle
-            bot.turn_distance_sensor(angle)
-            bot.move_distance(16)
+            self.turn_distance_sensor(angle)
+            self.move_distance(14)
         elif angle == 90:
             degrees = 0
             if num_corridors > 1:
                 print("turn: num_corridors =", num_corridors)
-                bot.move_distance(28)
+                self.move_distance(28)
         else:
             degrees = angle - 270
-            bot.turn_distance_sensor(angle)
-            bot.move_distance(16)
+            self.turn_distance_sensor(angle)
+            self.move_distance(14)
 
-        bot.turn_distance_sensor(angle)
-        bot.turn_degrees(degrees, 90)
-        bot.turn_distance_sensor(90)
+        self.turn_distance_sensor(angle)
+        self.turn_degrees(degrees, 90)
+        self.turn_distance_sensor(90)
+        self.move_distance(10)
 
     def update_direction(self, angle):
-        self.current_direction = get_direction(angle)
+        self.current_direction = self.get_direction(angle)
 
     def get_direction(self, angle):
         # TODO: get smarter about this - make an array or table
@@ -447,7 +454,7 @@ class SlaughterBot():
             elif self.current_direction == 'W':
                 return 'N'
 
-        if angle == 180:
+        elif angle == 180:
             if self.current_direction == 'N':
                 return 'W'
             elif self.current_direction == 'E':
@@ -456,6 +463,10 @@ class SlaughterBot():
                 return 'E'
             elif self.current_direction == 'W':
                 return 'S'
+
+        else:
+            return self.current_direction
+
 
     def get_choices(self, angles):
         choices = []
@@ -557,19 +568,21 @@ def main():
         # TODO: We might start at a decision point, so we should probably scan first before moving
         bot.move_distance(10)
         #scan for corridors
-        angles = bot.scan_distance_angles(25, 90)
+        angles = bot.scan_distance_angles(30, 90)
         x = len(angles)
         if x == 0:
             # Dead end ... reverse logic here - no where to go
             bot.turn_degrees(180,90)
             # TODO: we can make this function call turn degrees 180,90
             bot.current_direction = bot.reverse_direction(bot.current_direction)
+            print("main: I am backtracking!!")
+            bot.backtracking = True
             time.sleep(1)
             continue
 
         elif x == 1:
             # turn that direction
-            bot.turn(angle, x)
+            bot.turn(angles[0], x)
 
         else:
             if bot.backtracking == False:
