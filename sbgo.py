@@ -330,70 +330,85 @@ class SlaughterBot():
                     angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
                 else:
                     angleDisplacement = 0
+                    print("Stuck at 1")
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
                 print("Descision 1 picked: dist left <25 and dist right <25", angleDisplacement)
 
             elif distRight > 30 and distLeft < 14:
-                #angleDisplacement = -12
-                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
-                self.turn_degrees(-angleDisplacement,300)
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
+                self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
                 print("Descision 2 picked: dist left <10 and dist right > 25", angleDisplacement)
 
-
-
             elif distRight < 14 and distLeft > 30:
-                #angleDisplacement = 12
-                angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
+                angleDisplacement = -12
+                #angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
                 print("Descision 3 picked: dist left > 25 and dist right <10", angleDisplacement)
+            elif dist45 > dist135:
+                hypotenLen = centerOfRotation + dist135
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                self.turn_degrees(angleDisplacement,300)
+                time.sleep(0.5)
+                print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
+
+            elif dist45 < dist135:
+                hypotenLen = centerOfRotation + dist45
+                angleDisplacement = -12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                self.turn_degrees(angleDisplacement,300)
+                time.sleep(0.5)
+                print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
             else:
                 time.sleep(0.5)
+                print("stuck at 2")
 
 
         else:
 
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
-                #angleDisplacement = =12
-                #angleDisplacement = 12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
-                print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
+                print("Descision Corner 6 picked: dist 45 is more", angleDisplacement)
 
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
-                #angleDisplacement = -12
-                #angleDisplacement = -12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
-                self.turn_degrees(-angleDisplacement,300)
+                angleDisplacement = -12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
-                print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
+                print("Descision Corner 7 picked: dist 135 is more", angleDisplacement)
             else:
                 time.sleep(0.5)
+                print("stuck at 3")
 
         if dist45 <10 or dist135 < 10 and distRight > 30 and distLeft > 30:
             if dist45 > dist135:
                 hypotenLen = centerOfRotation + dist135
                 #angleDisplacement = 12
-                #angleDisplacement = 12
-                angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
+                angleDisplacement = 12
+                #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
-                print("Descision Corner 4 picked: dist 45 is more", angleDisplacement)
+                print("Descision Corner 8 picked: dist 45 is more", angleDisplacement)
             elif dist45 < dist135:
                 hypotenLen = centerOfRotation + dist45
                 #angleDisplacement = -12
-                #angleDisplacement = -12
+                angleDisplacement = -12
                 angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
-                self.turn_degrees(-angleDisplacement,300)
+                self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
-                print("Descision Corner 5 picked: dist 135 is more", angleDisplacement)
+                print("Descision Corner 9 picked: dist 135 is more", angleDisplacement)
             else:
                 time.sleep(0.5)
+                print("Stuck at 4")
 
 
         if nocalibration == 0:
