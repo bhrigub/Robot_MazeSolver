@@ -30,6 +30,8 @@ class SlaughterBot():
         self.backtracking = False
         self.genList = list()
         self.visited = list()
+        self.x = 0
+        self.y = 0
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -514,6 +516,8 @@ class SlaughterBot():
                 angle = 0
             elif d2 == 'E':
                 angle = 180
+        else:
+            angle = 90
         return angle
 
     def turn_cardinal(self, directionTo):
@@ -606,7 +610,7 @@ def main():
                 # turn angles into N,S,E,W choices
                 choices = bot.get_choices(angles)
                 # more than one direction, so make decision point
-                dp = DecisionPoint(bot.current_direction, 0, 0, choices)
+                dp = DecisionPoint(bot.current_direction, bot.x, bot.y, choices)
                 # add decision point to stack
                 bot.add_decision_point(dp)
 
