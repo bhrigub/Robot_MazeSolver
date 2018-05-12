@@ -543,8 +543,10 @@ class SlaughterBot():
                 angle = 0
             elif d2 == 'E':
                 angle = 180
-        else:
+
+        if d1 == d2:
             angle = 90
+
         return angle
 
     def turn_cardinal(self, directionTo):
