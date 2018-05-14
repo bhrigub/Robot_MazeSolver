@@ -107,7 +107,11 @@ class SlaughterBot():
             if distance_val>10:
                 while distance_val > 0:
                     travel = 5
-		            self.calibration()
+		    dist0, dist45, dist90, dist135, dist180= self.sensorRead()
+                    if dist0 < 10 or dist45 < 10 or dist90 < 10 or dist135 < 10 or dist180 < 10:
+                        self.calibration()
+                        time.sleep(0.5)
+
                     self.move_distance(travel)
                     distance_val = distance_val - 5
                     print("Distance travelled = ", travel)
@@ -119,7 +123,7 @@ class SlaughterBot():
                 print("target = "+str(target))
                 self.gpg.drive_cm(distance_val, False)   
             time.sleep(2)
-            print("Pos = "+str(bot.read_encoders_avg("cm")))
+            print("Pos = "+str(self.read_encoders_avg("cm")))
             self.coordinateBuilder(start)
 
 
