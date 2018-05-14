@@ -107,7 +107,7 @@ class SlaughterBot():
             if distance_val>10:
                 while distance_val > 0:
                     travel = 5
-		            self.calibration()
+		    self.calibration()
                     self.move_distance(travel)
                     distance_val = distance_val - 5
                     print("Distance travelled = ", travel)
@@ -118,9 +118,9 @@ class SlaughterBot():
                 print("start = " +str(start))
                 print("target = "+str(target))
                 self.gpg.drive_cm(distance_val, False)   
-            time.sleep(2)
-            print("Pos = "+str(bot.read_encoders_avg("cm")))
-            self.coordinateBuilder(start)
+                time.sleep(2)
+                print("Pos = "+str(self.read_encoders_avg("cm")))
+                self.coordinateBuilder(start)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -468,8 +468,6 @@ class SlaughterBot():
         self.genList.insert(0, decision_point)
 
     def turn(self, angle, num_corridors):
-        # update current direction
-        self.update_direction(angle)
 
         if angle < 90:
             degrees = 90 - angle
@@ -487,6 +485,8 @@ class SlaughterBot():
 
         self.turn_distance_sensor(angle)
         self.turn_degrees(degrees, 90)
+        # update current direction
+        self.update_direction(angle)
         self.turn_distance_sensor(90)
         self.move_distance(10)
 
@@ -556,8 +556,13 @@ class SlaughterBot():
         return angle
 
     def turn_cardinal(self, directionTo):
-        angle = self.cardinal_to_degrees(directionTo)
-        self.turn(angle, 1)
+        reverse = self.reverse_direction(self.current_direction)
+        if directionTo == reverse:
+            self.turn_degrees(180, 90)
+            self.current_direction = reverse
+        else:
+            angle = self.cardinal_to_degrees(directionTo)
+            self.turn(angle, 1)
 
     def navigate(self):
         # get latest decision point
@@ -591,14 +596,15 @@ class SlaughterBot():
     def coordinateBuilder(self, start):
         x = 0
         y = 0
+	print("Current_direction: ",self.current_direction)
         if self.current_direction == 'N':
-            y = read_encoders_avg("cm")
+            y = self.read_encoders_avg("cm")
         elif self.current_direction == 'E':
-            x = read_encoders_avg("cm")
+            x = self.read_encoders_avg("cm")
         elif self.current_direction == 'W':
-            x = -(read_encoders_avg("cm"))
+            x = -(self.read_encoders_avg("cm"))
         else:
-            y = -(read_encoders_avg("cm"))
+            y = -(self.read_encoders_avg("cm"))
         print("Add x: {}, Add y: {}".format(x,y)) 
         #Calculate actual distance travelled
         if x!=0 and x>0:
