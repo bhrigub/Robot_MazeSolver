@@ -107,7 +107,10 @@ class SlaughterBot():
             if distance_val>10:
                 while distance_val > 0:
                     travel = 5
-		    self.calibration()
+		    dist0, dist45, dist90, dist135, dist180= self.sensorRead()
+                    if dist0 < 10 or dist45 < 10 or dist90 < 10 or dist135 < 10 or dist180 < 10:
+                        self.calibration()
+                        time.sleep(0.5)
                     self.move_distance(travel)
                     distance_val = distance_val - 5
                     print("Distance travelled = ", travel)
