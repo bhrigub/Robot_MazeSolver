@@ -107,14 +107,20 @@ class SlaughterBot():
             if distance_val>10:
                 while distance_val > 0:
                     travel = 5
-		    self.calibration()
+		            self.calibration()
                     self.move_distance(travel)
                     distance_val = distance_val - 5
                     print("Distance travelled = ", travel)
                     print("Distance trailing = ", distance_val)
             else:
-                self.gpg.drive_cm(distance_val, False)
+                start = self.read_encoders_avg("cm")
+                target = start + distance_val
+                print("start = " +str(start))
+                print("target = "+str(target))
+                self.gpg.drive_cm(distance_val, False)   
             time.sleep(2)
+            print("Pos = "+str(bot.read_encoders_avg("cm")))
+            self.coordinateBuilder(start)
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -580,6 +586,36 @@ class SlaughterBot():
             print("navigate: I am heading: {}".format(self.current_direction))
         else:
             print("navigate: I have no more nodes to explore!")    
+
+    #Map coordinates as robot moves around
+    def coordinateBuilder(self, start):
+        x = 0
+        y = 0
+        if self.current_direction == 'N':
+            y = read_encoders_avg("cm")
+        elif self.current_direction == 'E':
+            x = read_encoders_avg("cm")
+        elif self.current_direction == 'W':
+            x = -(read_encoders_avg("cm"))
+        else:
+            y = -(read_encoders_avg("cm"))
+        print("Add x: {}, Add y: {}".format(x,y)) 
+        #Calculate actual distance travelled
+        if x!=0 and x>0:
+            x = x - start
+        if x < 0:
+            x = x + start
+        if y!=0 and y>0:
+            y = y - start
+        if y < 0:
+            y = y + start
+        print("Coordinates traversed:: u= {}; v= {} ".format(str(x),str(y)))
+        #Calculate current coordinates
+        self.x = self.x + x
+        self.y = self.y + y 
+        print("Current Coordinates:: x= {}; y= {} ".format(str(self.x),str(self.y)))
+        
+        #return self.x, self.y 
 
 class DecisionPoint:
     """
