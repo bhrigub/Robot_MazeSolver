@@ -32,6 +32,7 @@ class SlaughterBot():
         self.visited = list()
         self.x = 0
         self.y = 0
+	self.calibrationCount=0
 
 
 # Attribution: code used from GoPiGo3 software found at:
@@ -319,7 +320,6 @@ class SlaughterBot():
         return dist0, dist45, dist90, dist135, dist180
 
     def calibration(self):
-
         distRight, dist45, dist90, dist135, distLeft= self.sensorRead()
         baseLen = 10
         nocalibration=0
@@ -330,19 +330,29 @@ class SlaughterBot():
             #if distRight > 10 and distLeft > 10:
             #    nocalibration=1
 
-            if distRight < 30 and distLeft < 30:
+            if distRight < 35 and distLeft < 35:
                 if distRight > distLeft:
                     perpendicularLen = (distRight - distLeft) / 2
                     #angleDisplacement = 10
                     angleDisplacement = round(math.degrees(math.atan(perpendicularLen / baseLen)))
+		    self.calibrationCount += 1
+			
                 elif distRight < distLeft:
                     perpendicularLen = (distLeft - distRight) / 2
                     #angleDisplacement = -10
                     angleDisplacement = -(round(math.degrees(math.atan(perpendicularLen / baseLen))))
-                else:
+		    self.calibrationCount += 1
+
+		elif dist90 <10:
+		    angleDisplacement = 180
+		    self.calibrationCount += 1
+
+		else:
                     angleDisplacement = 0
                     print("Stuck at 1")
-                self.turn_degrees(angleDisplacement,300)
+                    self.calibrationCount +=1
+
+		self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
                 print("Descision 1 picked: dist left <25 and dist right <25", angleDisplacement)
                 
@@ -350,7 +360,8 @@ class SlaughterBot():
                 hypotenLen = dist135
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = round(math.degrees(math.asin(perpendicularLen/hypotenLen)))
-                
+                self.calibrationCount += 1
+   
                 angleDisplacement = 12
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
@@ -360,7 +371,8 @@ class SlaughterBot():
                 hypotenLen = dist45
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = -(round(math.degrees(math.asin(perpendicularLen/hypotenLen))))
-                
+                self.calibrationCount += 1
+      
                 angleDisplacement = -12
                 self.turn_degrees(angleDisplacement,300)
                 time.sleep(0.5)
@@ -369,7 +381,8 @@ class SlaughterBot():
                 hypotenLen = dist135
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = round(math.degrees(math.acos(perpendicularLen/hypotenLen)))
-                
+                self.calibrationCount += 1
+      
                 #hypotenLen = centerOfRotation + dist135
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -381,7 +394,8 @@ class SlaughterBot():
                 hypotenLen = dist45
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = -(round(math.degrees(math.asin(perpendicularLen/hypotenLen))))
-                
+                self.calibrationCount += 1
+
                 #hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -391,14 +405,16 @@ class SlaughterBot():
             else:
                 time.sleep(0.5)
                 print("stuck at 2")
-                
+                self.calibrationCount += 1
+
         else:
 
             if dist45 > dist135:
                 hypotenLen = dist135
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = round(math.degrees(math.asin(perpendicularLen/hypotenLen)))                
-                
+                self.calibrationCount += 1
+   
                 #hypotenLen = centerOfRotation + dist135
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -410,7 +426,8 @@ class SlaughterBot():
                 hypotenLen = dist45
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = -(round(math.degrees(math.asin(perpendicularLen/hypotenLen))))
-                
+                self.calibrationCount += 1
+   
                 #hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -420,13 +437,15 @@ class SlaughterBot():
             else:
                 time.sleep(0.5)
                 print("stuck at 3")
+		self.calibrationCount += 1
 
-        if (dist45 <10 or dist135 < 10) and (distRight > 30) and (distLeft > 30):
+        if (dist45 <14 or dist135 < 14) and (distRight > 30) and (distLeft > 30):
             if dist45 > dist135:
                 hypotenLen = dist135
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = round(math.degrees(math.asin(perpendicularLen/hypotenLen)))          
-                
+                self.calibrationCount += 1
+    
                 #hypotenLen = centerOfRotation + dist135
                 angleDisplacement = 12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -437,7 +456,8 @@ class SlaughterBot():
                 hypotenLen = dist135
                 perpendicularLen = centerOfRotation
                 #angleDisplacement = -(round(math.degrees(math.asin(perpendicularLen/hypotenLen))))
-                
+                self.calibrationCount += 1
+     
                 #hypotenLen = centerOfRotation + dist45
                 angleDisplacement = -12
                 #angleDisplacement = round(math.degrees(math.acos(baseDist/hypotenLen)))
@@ -447,14 +467,18 @@ class SlaughterBot():
             else:
                 time.sleep(0.5)
                 print("Stuck at 4")
+		self.calibrationCount += 1
 
 
         if nocalibration == 0:
-            dist0, dist45, dist90, dist135, dist180= self.sensorRead()
-
-            if dist0 < 10 or dist45 < 10 or dist90 < 10 or dist135 < 10 or dist180 < 10:
-                self.calibration()
-                time.sleep(0.5)
+            if self.calibrationCount < 4:
+		print("Self calibration:",self.calibrationCount)
+		if self.calibrationCount >3:
+		    self.calibrationCount = 0
+		dist0, dist45, dist90, dist135, dist180= self.sensorRead()
+            	if dist0 < 10 or dist45 < 10 or dist90 < 10 or dist135 < 10 or dist180 < 10:
+	            self.calibration()
+                    time.sleep(0.5)
 
     def reverse_direction(self, direction):
         if direction == 'N':
@@ -491,7 +515,7 @@ class SlaughterBot():
         # update current direction
         self.update_direction(angle)
         self.turn_distance_sensor(90)
-        self.move_distance(10)
+        #self.move_distance(10)
 
     def update_direction(self, angle):
         self.current_direction = self.get_direction(angle)
@@ -660,23 +684,27 @@ def main():
 #            bot.calibrateJunction()
         time.sleep(1)
         # TODO: We might start at a decision point, so we should probably scan first before moving
-        bot.move_distance(10)
+        #bot.move_distance(10)
         #scan for corridors
-        angles = bot.scan_distance_angles(30, 90)
+        angles = bot.scan_distance_angles(25, 90)
         x = len(angles)
         if x == 0:
             # Dead end ... reverse logic here - no where to go
-            bot.turn_degrees(180,90)
+            while bot.current_distance.value > 10:
+                bot.move_distance(5)
+	    bot.turn_degrees(180,90)
+            bot.calibration()
             # TODO: we can make this function call turn degrees 180,90
             bot.current_direction = bot.reverse_direction(bot.current_direction)
             print("main: I am backtracking!!")
             bot.backtracking = True
             time.sleep(1)
-            continue
+            #continue
 
         elif x == 1:
             # turn that direction
             bot.turn(angles[0], x)
+	    bot.calibration()
 
         else:
             if bot.backtracking == False:
@@ -692,6 +720,8 @@ def main():
 	    # pick direction to move based on stack decision point
 	    # TODO: print direction we're trying in navigate
             bot.navigate()
+	#bot.calibration()
+        bot.move_distance(10)
 
 
 def init():
